@@ -1,9 +1,9 @@
-package com.example.eixo.oficina.controller;
+package com.example.eixo.Oficina.api;
 
-import com.example.eixo.oficina.model.Oficina;
-import com.example.eixo.oficina.service.OficinaService;
+import com.example.eixo.Oficina.model.Oficina;
+import com.example.eixo.Oficina.service.OficinaService;
+import jakarta.persistence.PostUpdate;
 import lombok.RequiredArgsConstructor;
-import org.hibernate.boot.jaxb.mapping.spi.JaxbFetchProfileImpl;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -35,5 +35,10 @@ public class OficinaController {
         oficinaService.deletar(id);
     }
 
+    /*@PostUpdate
+    public Oficina atualizar(OficinaDto oficinaDto, Long id){
+        return oficinaService.atualizar(oficinaDto, id);
+    }
+*/
 
 }
