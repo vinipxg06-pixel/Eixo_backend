@@ -34,7 +34,7 @@ public class UsuariosController {
     public ResponseEntity<UsuarioResponse>postUsuario(@RequestBody UsuarioRequest usuariosRequest){
         return ResponseEntity.status(201).body(usuarioService.saveUsuario(usuariosRequest));
     }
-    @PostMapping
+    @PostMapping("/login")
     public ResponseEntity<UsuarioResponse>postLogin(@RequestBody LoginRequest loginRequest){
         return ResponseEntity.status(201).body(usuarioService.login(loginRequest));
     }

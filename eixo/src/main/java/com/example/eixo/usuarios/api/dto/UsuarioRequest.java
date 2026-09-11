@@ -5,11 +5,11 @@ import jakarta.validation.constraints.NotBlank;
 import org.aspectj.weaver.ast.Not;
 
 public record UsuarioRequest(
-    @NotBlank
+    @NotBlank(message = "O nome de usuario e obrigatorio")
     String nomeUsuario,
-    @NotBlank
+    @NotBlank(message = "O email e obrigatorio")
     String email,
-    @NotBlank
+    @NotBlank(message = "Senha e obrigatoria")
     String senha
 ){
 }
