@@ -11,6 +11,7 @@ public class OficinaMapper {
     public Oficina transformaEmEntidade(OficinaRequest oficinaRequest){
         Oficina oficina = new Oficina();
         oficina.setNomeOficina(oficinaRequest.nomeOficina());
+        oficina.setCnpj(oficinaRequest.cnpj());
         oficina.setTelefone(oficinaRequest.telefone());
         oficina.setEmail(oficinaRequest.email());
         return oficina;

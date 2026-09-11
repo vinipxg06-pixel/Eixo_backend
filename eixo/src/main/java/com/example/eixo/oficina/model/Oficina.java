@@ -4,7 +4,9 @@ import com.example.eixo.cliente.model.Cliente;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -22,22 +24,29 @@ public class Oficina {
     @Column(name = "id_oficina")
     private Long oficinaId;
 
-    @Column(name = "nome_oficina")
+    @Column(name = "cnpj", nullable = false)
+    private String cnpj;
+
+    @Column(name = "nome_oficina", nullable = false)
     private String nomeOficina;
 
-    @Column(name = "email")
+    @Column(name = "email", nullable = false)
     private String email;
 
-    @Column(name = "telefone")
+    @Column(name = "telefone", nullable = false)
     private String telefone;
 
-    @Column(name = "created_at")
+    @Column(name = "created_at", nullable = false)
     @CreationTimestamp
     private LocalDateTime createdAt;
 
-    @Column(name = "updated_at")
+    @Column(name = "updated_at", nullable = false)
     @UpdateTimestamp
     private LocalDateTime updatedAt;
+
+    @OneToMany(mappedBy = "oficina")
+    @JsonIgnore
+    private List<Cliente> listaClientes = new ArrayList<>();
 
     public Long getOficinaId() {
         return oficinaId;
@@ -45,6 +54,14 @@ public class Oficina {
 
     public void setOficinaId(Long oficinaId) {
         this.oficinaId = oficinaId;
+    }
+
+    public String getCnpj() {
+        return cnpj;
+    }
+
+    public void setCnpj(String cnpj) {
+        this.cnpj = cnpj;
     }
 
     public String getNomeOficina() {
@@ -87,7 +104,6 @@ public class Oficina {
         this.updatedAt = updatedAt;
     }
 
-
     public List<Cliente> getListaClientes() {
         return listaClientes;
     }
@@ -95,9 +111,4 @@ public class Oficina {
     public void setListaClientes(List<Cliente> listaClientes) {
         this.listaClientes = listaClientes;
     }
-
-
-    @OneToMany(mappedBy = "oficina")
-    @JsonIgnore
-    private List<Cliente> listaClientes = new ArrayList<>();
 }

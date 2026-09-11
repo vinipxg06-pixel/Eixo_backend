@@ -7,6 +7,8 @@ public record OficinaRequest(
         @NotBlank
         String nomeOficina,
         @NotBlank
+        String cnpj,
+        @NotBlank
         @Email
         String email,
         @NotBlank
