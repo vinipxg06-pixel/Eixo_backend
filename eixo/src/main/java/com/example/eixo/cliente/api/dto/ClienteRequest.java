@@ -13,6 +13,8 @@ public record ClienteRequest(
         String telefone,
 
         @Email
-        String email
+        String email,
+
+        Long oficinaId
 ) {
 }

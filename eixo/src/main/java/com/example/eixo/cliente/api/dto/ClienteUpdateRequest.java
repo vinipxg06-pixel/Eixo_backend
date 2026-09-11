@@ -16,6 +16,8 @@ public record ClienteUpdateRequest(
         String telefone,
 
         @Email
-        String email
+        String email,
+
+        Long oficinaId
 ) {
 }

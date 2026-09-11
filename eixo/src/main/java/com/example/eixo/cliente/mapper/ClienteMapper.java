@@ -15,7 +15,6 @@ public class ClienteMapper {
         cliente.setEmail(clienteRequest.email());
         cliente.setTelefone(clienteRequest.telefone());
         cliente.setCpfCnpj(clienteRequest.cpfCnpj());
-
         return cliente;
     }
 
@@ -26,7 +25,8 @@ public class ClienteMapper {
                 cliente.getStatus(),
                 cliente.getCpfCnpj(),
                 cliente.getTelefone(),
-                cliente.getEmail()
+                cliente.getEmail(),
+                cliente.getOficina().getOficinaId()
         );
     }
 }

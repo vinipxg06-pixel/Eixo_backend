@@ -8,6 +8,7 @@ public record ClienteResponse(
         Status status,
         String cpfcnpj,
         String telefone,
-        String email
+        String email,
+        Long oficinaId
 ) {
 }
