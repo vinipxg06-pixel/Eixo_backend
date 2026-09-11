@@ -1,14 +1,12 @@
 package com.example.eixo.Oficina.model;
 
-import jakarta.annotation.Nonnull;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @NoArgsConstructor
 @Table(name = "oficinas")
@@ -18,28 +16,29 @@ public class Oficina {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id_oficina")
     private Long id;
 
-    @Nonnull
+
     @Column(name = "nome_oficina")
     private String nomeOficina;
 
-    @Nonnull
+
     @Column(name = "email")
     private String email;
 
-    @Nonnull
+
     @Column(name = "telefone")
     private String telefone;
 
-    @Nonnull
-    @Column(name = "created_at")
-    @CreatedDate
-    private LocalDate createdAt;
 
-    @Nonnull
+    @Column(name = "created_at")
+    @CreationTimestamp
+    private LocalDateTime createdAt;
+
+
     @Column(name = "updated_at")
-    @LastModifiedDate
-    private LocalDate updatedAt;
+    @UpdateTimestamp
+    private LocalDateTime updatedAt;
 
 }

@@ -1,11 +1,15 @@
 package com.example.eixo.Oficina.service;
 
+import com.example.eixo.Oficina.api.request.OficinaRequest;
 import com.example.eixo.Oficina.api.response.OficinaResponse;
+import com.example.eixo.Oficina.mapper.OficinaMapper;
 import com.example.eixo.Oficina.model.Oficina;
 import com.example.eixo.Oficina.repository.OficinaRepository;
 import lombok.RequiredArgsConstructor;
+//import org.springframework.security.web.server.ui.OneTimeTokenSubmitPageGeneratingWebFilter;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -13,48 +17,44 @@ import java.util.List;
 public class OficinaService {
 
     private final OficinaRepository oficinaRepository;
+    private final OficinaMapper oficinaMapper;
 
-    public Oficina findOficinaById(Long id){
-        return oficinaRepository.findById(id)
-                .orElseThrow();
+    public OficinaResponse encontrarOficinaPeloId(Long id){
+       Oficina oficinaEncontrada = oficinaRepository.findById(id).get();
+       OficinaResponse oficinaResponse = oficinaMapper.transformarEmResposta(oficinaEncontrada);
+       return oficinaResponse;
     }
 
-    public OficinaResponse findOficinaResponseById(Long id){
-        Oficina oficina = oficinaRepository.findById(id).get();
-        OficinaResponse oficinaResponse = new OficinaResponse(oficina.getId(), oficina.getNomeOficina(), oficina.getEmail(), oficina.getTelefone(), oficina.getUpdatedAt(), oficina.getCreatedAt());
+    public List<OficinaResponse> listarOficinas(){
+        List<Oficina> oficina = oficinaRepository.findAll();
+        List<OficinaResponse> oficinaResponse = new ArrayList<>();
+
+        for (Oficina oficina1 : oficina){
+            OficinaResponse oficinasListadas = oficinaMapper.transformarEmResposta(oficina1);
+            oficinaResponse.add(oficinasListadas);
+        }
         return oficinaResponse;
     }
 
-    public List<OficinaResponse> listarOficinaResponde() {
-        List<Oficina> oficinas = oficinaRepository.findAll();
-        List<OficinaResponse> oficinaResponses = oficinas.stream()
-                .map(oficina -> new OficinaResponse(oficina.getId(), oficina.getNomeOficina(), oficina.getEmail(), oficina.getTelefone(), oficina.getUpdatedAt(), oficina.getCreatedAt())).toList();
-        return oficinaResponses;
+    public void deletarOficina(Long id){
+        Oficina oficinaDeletar = oficinaRepository.findById(id).get();
+        oficinaRepository.delete(oficinaDeletar);
     }
 
-    public List<Oficina> listar(){
-        return oficinaRepository.findAll();
-    };
+    public OficinaResponse atualizarOficina(OficinaRequest oficinaRequest, Long id) {
+        Oficina atualizar = oficinaRepository.findById(id).get();
+        atualizar.setNomeOficina(oficinaRequest.nomeOficina());
+        atualizar.setTelefone(oficinaRequest.telefone());
+        atualizar.setEmail(oficinaRequest.email());
+        oficinaRepository.save(atualizar);
 
-    public Oficina buscarId(Long id){
-        return oficinaRepository.getReferenceById(id);
+        return oficinaMapper.transformarEmResposta(atualizar);
     }
 
-    public Oficina salvar(Oficina oficina){
-       return oficinaRepository.save(oficina);
-    }
+    public OficinaResponse salvarOficina(OficinaRequest oficinaRequest){
+        Oficina oficinaSalvar = oficinaMapper.transformaEmEntidade(oficinaRequest);
+        oficinaRepository.save(oficinaSalvar);
+        return oficinaMapper.transformarEmResposta(oficinaSalvar);
 
-    public void deletar(Long id){
-        oficinaRepository.deleteById(id);
     }
-
-   /* public Oficina atualizar(OficinaDto oficinaDto, Long id){
-        Oficina oficinaAtualizado = findById(id);
-        oficinaAtualizado.setNome_oficina(oficinaDto.getNome_oficina());
-        oficinaAtualizado.setEmail(oficinaDto.getEmail());
-        oficinaAtualizado.setTelefone(oficinaDto.getTelefone());
-        oficinaAtualizado.setUpdated_at(oficinaDto.getUpdated_at());
-        return oficinaRepository.save(oficinaAtualizado);
-}
- */
 }
