@@ -23,6 +23,8 @@ dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-flyway")
 	//implementation("org.springframework.boot:spring-boot-starter-security")
 	implementation("org.springframework.boot:spring-boot-starter-validation")
+	implementation("org.mapstruct:mapstruct:1.6.3")
+	annotationProcessor ("org.mapstruct:mapstruct-processor:1.6.3")
 	implementation("org.springframework.boot:spring-boot-starter-webmvc")
 	implementation("org.flywaydb:flyway-mysql")
 	compileOnly("org.projectlombok:lombok")
