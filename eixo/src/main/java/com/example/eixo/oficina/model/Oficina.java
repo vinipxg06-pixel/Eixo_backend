@@ -1,6 +1,7 @@
 package com.example.eixo.oficina.model;
 
 import com.example.eixo.cliente.model.Cliente;
+import com.example.eixo.usuarios.model.Usuario;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -17,6 +18,7 @@ import java.util.List;
 @NoArgsConstructor
 @Table(name = "oficinas")
 @Entity
+@Data
 public class Oficina {
 
     @Id
@@ -48,67 +50,10 @@ public class Oficina {
     @JsonIgnore
     private List<Cliente> listaClientes = new ArrayList<>();
 
-    public Long getOficinaId() {
-        return oficinaId;
-    }
+    @OneToMany(mappedBy = "oficina")
+    @JsonIgnore
+    private List<Usuario> listaUsuarios = new ArrayList<>();
 
-    public void setOficinaId(Long oficinaId) {
-        this.oficinaId = oficinaId;
-    }
 
-    public String getCnpj() {
-        return cnpj;
-    }
-
-    public void setCnpj(String cnpj) {
-        this.cnpj = cnpj;
-    }
-
-    public String getNomeOficina() {
-        return nomeOficina;
-    }
-
-    public void setNomeOficina(String nomeOficina) {
-        this.nomeOficina = nomeOficina;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getTelefone() {
-        return telefone;
-    }
-
-    public void setTelefone(String telefone) {
-        this.telefone = telefone;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public LocalDateTime getUpdatedAt() {
-        return updatedAt;
-    }
-
-    public void setUpdatedAt(LocalDateTime updatedAt) {
-        this.updatedAt = updatedAt;
-    }
-
-    public List<Cliente> getListaClientes() {
-        return listaClientes;
-    }
-
-    public void setListaClientes(List<Cliente> listaClientes) {
-        this.listaClientes = listaClientes;
-    }
 }
+

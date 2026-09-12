@@ -1,6 +1,6 @@
 package com.example.eixo.usuarios.api.dto;
 
-import com.example.eixo.usuarios.model.Status;
+import com.example.eixo.usuarios.model.UsuarioStatus;
 import jakarta.validation.constraints.NotBlank;
 
 public record UsuarioUpdateRequest(
@@ -10,6 +10,6 @@ public record UsuarioUpdateRequest(
         String nomeUsuario,
         @NotBlank
         String senha,
-        Status status
+        UsuarioStatus usuarioStatus
 ) {
 }

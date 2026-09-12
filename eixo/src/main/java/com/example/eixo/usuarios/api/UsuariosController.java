@@ -1,10 +1,7 @@
 package com.example.eixo.usuarios.api
 ;
 
-import com.example.eixo.usuarios.api.dto.LoginRequest;
-import com.example.eixo.usuarios.api.dto.UsuarioRequest;
-import com.example.eixo.usuarios.api.dto.UsuarioResponse;
-import com.example.eixo.usuarios.api.dto.UsuarioUpdateRequest;
+import com.example.eixo.usuarios.api.dto.*;
 import com.example.eixo.usuarios.model.Usuario;
 import com.example.eixo.usuarios.service.UsuarioService;
 import lombok.AllArgsConstructor;
@@ -30,12 +27,17 @@ public class UsuariosController {
         return ResponseEntity.ok().body(usuarioService.findById(id));
     }
 
+    @GetMapping("/oficinaUsuarios/{id}")
+    public ResponseEntity<List<UsuarioResponse>> getUsuariosByOficinaID(@PathVariable Long id){
+        return ResponseEntity.ok().body(usuarioService.findAllUsuariosByOficinaId(id));
+    }
+
     @PostMapping
     public ResponseEntity<UsuarioResponse>postUsuario(@RequestBody UsuarioRequest usuariosRequest){
         return ResponseEntity.status(201).body(usuarioService.saveUsuario(usuariosRequest));
     }
     @PostMapping("/login")
-    public ResponseEntity<UsuarioResponse>postLogin(@RequestBody LoginRequest loginRequest){
+    public ResponseEntity<LoginResponse>postLogin(@RequestBody LoginRequest loginRequest){
         return ResponseEntity.status(201).body(usuarioService.login(loginRequest));
     }
 

@@ -7,6 +7,7 @@ public record LoginRequest(
         String email,
         @NotBlank(message = "Senha e obrigatoria")
         String senha
+
 ) {
 
 }

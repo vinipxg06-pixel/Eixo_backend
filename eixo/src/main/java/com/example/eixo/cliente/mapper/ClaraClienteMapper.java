@@ -9,7 +9,7 @@ import org.mapstruct.Mapping;
 
 @Mapper(componentModel = "spring")
 public interface ClaraClienteMapper {
-
+/*
     @Mapping(target = "clienteId", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
@@ -18,5 +18,6 @@ public interface ClaraClienteMapper {
 
     @Mapping(source = "oficina.oficinaId", target = "oficinaId")
     ClienteResponse toResponse(Cliente cliente);
+ */
 }
 
