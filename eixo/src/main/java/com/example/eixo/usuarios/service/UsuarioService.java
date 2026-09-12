@@ -4,6 +4,8 @@ import com.example.eixo.usuarios.api.dto.LoginRequest;
 import com.example.eixo.usuarios.api.dto.UsuarioRequest;
 import com.example.eixo.usuarios.api.dto.UsuarioResponse;
 import com.example.eixo.usuarios.api.dto.UsuarioUpdateRequest;
+import com.example.eixo.usuarios.exception.EmailJaCadastrado;
+import com.example.eixo.usuarios.exception.ErroResponse;
 import com.example.eixo.usuarios.mapper.UsuarioMapper;
 import com.example.eixo.usuarios.model.Status;
 import com.example.eixo.usuarios.model.Usuario;
@@ -11,6 +13,7 @@ import com.example.eixo.usuarios.repository.UsuarioRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -49,7 +52,8 @@ public class UsuarioService {
     public UsuarioResponse updateUsuario(UsuarioUpdateRequest usuarioUpdateRequest, Long id){
         Usuario usuario = usuarioRepository.findById(id).get();
         usuario.setEmail(usuarioUpdateRequest.email());
-        usuario.setNomeUsuario(usuarioUpdateRequest.senha());
+        usuario.setNomeUsuario(usuarioUpdateRequest.nomeUsuario());
+        usuario.setSenha(usuarioUpdateRequest.senha());
         usuario.setStatus(usuarioUpdateRequest.status());
         Usuario usuarioAtualizado = usuarioRepository.save(usuario);
         UsuarioResponse usuarioResponse = usuarioMapper.toResponse(usuario);
@@ -64,6 +68,9 @@ public class UsuarioService {
 
     public UsuarioResponse saveUsuario(UsuarioRequest usuarioRequest){
         Usuario usuario = usuarioMapper.toEntity(usuarioRequest);
+        if (usuarioRepository.existsByEmail(usuario.getEmail())) {
+            throw new EmailJaCadastrado("Email ja cadastrado");
+        }
         usuario.setStatus(Status.ATIVO);
         Usuario usuarioSave = usuarioRepository.save(usuario);
         return usuarioMapper.toResponse(usuarioSave);

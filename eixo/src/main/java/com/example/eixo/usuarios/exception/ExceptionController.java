@@ -16,8 +16,8 @@ import java.time.Instant;
 @RestControllerAdvice
 public class ExceptionController {
 
-    @ExceptionHandler
-    public ResponseEntity<ErroResponse> emailDuplicado(DataIntegrityViolationException x) {
+    @ExceptionHandler(EmailJaCadastrado.class)
+    public ResponseEntity<ErroResponse> emailDuplicado(EmailJaCadastrado x) {
         return ResponseEntity.status(HttpStatus.CONFLICT)
                 .body(new ErroResponse(409, "E-mail já cadastrado", Instant.now()));
     }

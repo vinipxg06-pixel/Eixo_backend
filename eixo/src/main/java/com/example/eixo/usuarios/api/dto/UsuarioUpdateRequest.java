@@ -7,6 +7,8 @@ public record UsuarioUpdateRequest(
         @NotBlank
         String email,
         @NotBlank
+        String nomeUsuario,
+        @NotBlank
         String senha,
         Status status
 ) {
