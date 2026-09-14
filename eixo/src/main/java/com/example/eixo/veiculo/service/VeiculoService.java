@@ -45,7 +45,10 @@ import java.util.stream.Collectors;
         }
 
         public List<VeiculoRespostaDTO> buscarPorCliente(Long clienteId) {
-            return veiculoRepository.findByClienteId(clienteId).stream().map(mapper::paraResposta).collect(Collectors.toList());
+            return veiculoRepository.findByCliente_ClienteId(clienteId)
+                    .stream()
+                    .map(mapper::paraResposta)
+                    .collect(Collectors.toList());
         }
 
         public VeiculoRespostaDTO atualizar(Long id, VeiculoDTO dto) {
