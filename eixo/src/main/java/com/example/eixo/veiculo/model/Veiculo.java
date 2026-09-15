@@ -11,9 +11,10 @@ public class Veiculo {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id_veiculo", nullable = false)
     private Long id;
 
-    @Column(nullable = false, length = 50)
+    @Column( nullable = false, length = 50)
     private String marca;
 
     @Column(nullable = false, length = 50)
