@@ -3,6 +3,8 @@ package com.example.eixo.pecasestoque.service;
 import com.example.eixo.excecao.excecoespersonalizadas.RecursoNaoEncontrado;
 import com.example.eixo.oficina.model.Oficina;
 import com.example.eixo.oficina.repository.OficinaRepository;
+import com.example.eixo.pecasestoque.api.dto.PecaEstoqueAdicionarRequest;
+import com.example.eixo.pecasestoque.api.dto.PecaEstoqueRemoverRequest;
 import com.example.eixo.pecasestoque.api.dto.PecaEstoqueRequest;
 import com.example.eixo.pecasestoque.api.dto.PecaEstoqueResponse;
 import com.example.eixo.pecasestoque.mapper.PecaEstoqueMapper;
@@ -43,7 +45,6 @@ public class PecaEstoqueService {
     public PecaEstoqueResponse findByIdAndOficinaId(Long estoqueId, Long oficinaId){
         PecaEstoque pecaEstoque = pecaEstoqueRepository
                 .findByEstoqueIdAndOficina_OficinaId(estoqueId, oficinaId);
-
         return pecaEstoqueMapper.transformarEmResponse(pecaEstoque);
     }
 
@@ -57,11 +58,13 @@ public class PecaEstoqueService {
         return pecaEstoqueMapper.transformarEmResponse(pecaEstoque);
     }
 
+    public PecaEstoque findById(Long estoqueId){
+        return pecaEstoqueRepository.findById(estoqueId).orElseThrow(() -> new RecursoNaoEncontrado("Peça com id: " + estoqueId + " não encontrada"));
+    }
+
     public PecaEstoqueResponse updatePecaEstoque(PecaEstoqueRequest pecaEstoqueRequest, Long estoqueId) {
-        PecaEstoque pecaEstoque = pecaEstoqueRepository.findById(estoqueId)
-                .orElseThrow(() -> new RecursoNaoEncontrado(
-                        "Peça com id: " + estoqueId + " não encontrada"
-                ));
+        PecaEstoque pecaEstoque = findById(estoqueId);
+
         Oficina oficina = oficinaRepository.findById(pecaEstoqueRequest.oficinaId())
                 .orElseThrow(() -> new RecursoNaoEncontrado(
                         "Oficina com id: " + pecaEstoqueRequest.oficinaId() + " não encontrada"
@@ -98,30 +101,20 @@ public class PecaEstoqueService {
         return pecaEstoqueMapper.transformarEmResponse(pecaSalva);
     }
 
-    public PecaEstoqueResponse adicionarEstoque(Long estoqueId, BigDecimal quantidadeEntrada, BigDecimal precoUnitarioEntrada) {
+    public PecaEstoqueResponse adicionarEstoque(Long estoqueId, PecaEstoqueAdicionarRequest pecaEstoqueAdicionarRequest) {
         PecaEstoque pecaEstoque = pecaEstoqueRepository.findById(estoqueId)
                 .orElseThrow(() -> new RecursoNaoEncontrado(
                         "Peça com id: " + estoqueId + " não encontrada"));
 
-        if (quantidadeEntrada == null ||
-                quantidadeEntrada.compareTo(BigDecimal.ZERO) <= 0) {
-            throw new IllegalArgumentException(
-                    "A quantidade de entrada deve ser maior que zero");
-        }
-
-        if (precoUnitarioEntrada == null ||
-                precoUnitarioEntrada.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException("O preço unitário não pode ser negativo");
-        }
 
         BigDecimal quantidadeAtual = pecaEstoque.getQuantidade();
         BigDecimal precoAtual = pecaEstoque.getPrecoUnitario();
 
         BigDecimal valorEstoqueAtual = quantidadeAtual.multiply(precoAtual);
 
-        BigDecimal valorEntrada = quantidadeEntrada.multiply(precoUnitarioEntrada);
+        BigDecimal valorEntrada = pecaEstoqueAdicionarRequest.quantidadeEntrada().multiply(pecaEstoqueAdicionarRequest.precoUnitarioEntrada());
 
-        BigDecimal novaQuantidade = quantidadeAtual.add(quantidadeEntrada);
+        BigDecimal novaQuantidade = quantidadeAtual.add(pecaEstoqueAdicionarRequest.quantidadeEntrada());
 
         BigDecimal novoPrecoMedio = valorEstoqueAtual.add(valorEntrada)
                         .divide(

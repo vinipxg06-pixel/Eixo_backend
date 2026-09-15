@@ -1,11 +1,15 @@
 package com.example.eixo.pecasestoque.api;
 
+import com.example.eixo.pecasestoque.api.dto.PecaEstoqueAdicionarRequest;
+import com.example.eixo.pecasestoque.api.dto.PecaEstoqueRemoverRequest;
 import com.example.eixo.pecasestoque.api.dto.PecaEstoqueRequest;
 import com.example.eixo.pecasestoque.api.dto.PecaEstoqueResponse;
 import com.example.eixo.pecasestoque.service.PecaEstoqueService;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @RestController
@@ -43,4 +47,16 @@ public class PecaEstoqueController {
         pecaEstoqueService.deletarPecaEstoque(estoqueId, oficinaId);
         return ResponseEntity.noContent().build();
     }
+
+    @PatchMapping("/{estoqueId}/remover")
+    public ResponseEntity<PecaEstoqueResponse> removerEstoque(@PathVariable Long estoqueId, @Valid @RequestBody PecaEstoqueRemoverRequest request) {
+        return ResponseEntity.ok(pecaEstoqueService.removerPecaEstoque(estoqueId, request.quantidade()));
+    }
+
+
+    @PatchMapping("/{estoqueId}/adicionar")
+    public ResponseEntity<PecaEstoqueResponse> adicionarEstoque(@PathVariable Long estoqueId, @RequestBody PecaEstoqueAdicionarRequest pecaEstoqueAdicionarRequest) {
+        return ResponseEntity.ok(pecaEstoqueService.adicionarEstoque(estoqueId, pecaEstoqueAdicionarRequest));
+    }
+
 }

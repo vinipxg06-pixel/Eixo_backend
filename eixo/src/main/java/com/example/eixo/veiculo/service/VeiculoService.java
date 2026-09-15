@@ -19,7 +19,6 @@ import java.util.stream.Collectors;
     @RequiredArgsConstructor
     public class VeiculoService {
 
-        private final Cliente cliente;
         private final VeiculoRepository veiculoRepository;
         private final ClienteRepository clienteRepository;
         private final VeiculoMapper mapper;
