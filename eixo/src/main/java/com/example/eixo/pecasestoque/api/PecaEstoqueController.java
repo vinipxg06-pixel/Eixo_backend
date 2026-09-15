@@ -55,7 +55,7 @@ public class PecaEstoqueController {
 
 
     @PatchMapping("/{estoqueId}/adicionar")
-    public ResponseEntity<PecaEstoqueResponse> adicionarEstoque(@PathVariable Long estoqueId, @RequestBody PecaEstoqueAdicionarRequest pecaEstoqueAdicionarRequest) {
+    public ResponseEntity<PecaEstoqueResponse> adicionarEstoque(@PathVariable Long estoqueId, @Valid @RequestBody PecaEstoqueAdicionarRequest pecaEstoqueAdicionarRequest) {
         return ResponseEntity.ok(pecaEstoqueService.adicionarEstoque(estoqueId, pecaEstoqueAdicionarRequest));
     }
 
