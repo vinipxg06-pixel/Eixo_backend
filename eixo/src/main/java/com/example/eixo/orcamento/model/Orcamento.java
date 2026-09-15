@@ -1,12 +1,11 @@
 package com.example.eixo.orcamento.model;
 
+import com.example.eixo.veiculo.model.Veiculo;
 import jakarta.persistence.*;
 import lombok.Data;
-import lombok.Generated;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
-import com.example.eixo.marcasmodelos.model.Marca;
 import com.example.eixo.oficina.model.Oficina;
 import com.example.eixo.cliente.model.Cliente;
 
@@ -25,7 +24,7 @@ public class Orcamento {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
-    private Status status;
+    private StatusOrcamento status;
 
     @Column(name = "mao_obra", nullable = false)
     private double maoDeObra;
@@ -52,7 +51,9 @@ public class Orcamento {
     @JoinColumn(name = "oficinas_id_oficina", nullable = false)
     private Oficina oficina;
 
-
+    @ManyToOne
+    @JoinColumn(name = "veiculos_id_veiculo", nullable = false)
+    private Veiculo veiculo;
 
 
 }

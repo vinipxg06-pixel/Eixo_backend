@@ -1,21 +1,23 @@
 package com.example.eixo.orcamento.api.request;
 
-import com.example.eixo.orcamento.model.Status;
+import com.example.eixo.orcamento.model.StatusOrcamento;
 import jakarta.validation.constraints.NotBlank;
 
-public record OficinaRequest(
+public record OrcamentoRequest(
 
         @NotBlank
-        Long cliente_id,
+        Long clienteId,
         @NotBlank
-        Long oficina_id,
+        Long oficinaId,
         @NotBlank
-        double valorTotal,
+        Long id,
         @NotBlank
         double maoDeObra,
         @NotBlank
-        Status status,
+        double valorTotal,
         @NotBlank
+        StatusOrcamento status,
+
         String descricao
 
 ) {}
