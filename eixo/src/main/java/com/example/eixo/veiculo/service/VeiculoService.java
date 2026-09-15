@@ -2,6 +2,8 @@ package com.example.eixo.veiculo.service;
 
 import com.example.eixo.cliente.model.Cliente;
 import com.example.eixo.cliente.repository.ClienteRepository;
+import com.example.eixo.marcasmodelos.model.Modelo;
+import com.example.eixo.marcasmodelos.repository.ModeloRepository;
 import com.example.eixo.veiculo.api.dto.VeiculoDTO;
 import com.example.eixo.veiculo.api.dto.VeiculoRespostaDTO;
 import com.example.eixo.veiculo.mapper.VeiculoMapper;
@@ -19,10 +21,10 @@ import java.util.stream.Collectors;
     @RequiredArgsConstructor
     public class VeiculoService {
 
-        private final Cliente cliente;
         private final VeiculoRepository veiculoRepository;
         private final ClienteRepository clienteRepository;
         private final VeiculoMapper mapper;
+        private final ModeloRepository modeloRepository;
 
         public VeiculoRespostaDTO cadastrar(VeiculoDTO dto) {
             if (veiculoRepository.findByPlaca(dto.getPlaca()).isPresent()) {
@@ -30,7 +32,7 @@ import java.util.stream.Collectors;
             }
             Cliente cliente = clienteRepository.findById(dto.getClienteId())
                     .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Cliente não encontrado"));
-            Veiculo veiculo = mapper.paraEntidade(dto, cliente);
+            Veiculo veiculo = mapper.paraEntidade(dto);
             return mapper.paraResposta(veiculoRepository.save(veiculo));
         }
 
@@ -56,8 +58,9 @@ import java.util.stream.Collectors;
                     .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Veículo não encontrado"));
             Cliente cliente = clienteRepository.findById(dto.getClienteId())
                     .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Cliente não encontrado"));
-            v.setMarca(dto.getMarca());
-            v.setModelo(dto.getModelo());
+            Modelo modelo = modeloRepository.findById(dto.getIdModelo())
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Modelo não encontrado"));
+            v.setModelo(modelo);
             v.setAno(dto.getAno());
             v.setPlaca(dto.getPlaca());
             v.setCor(dto.getCor());

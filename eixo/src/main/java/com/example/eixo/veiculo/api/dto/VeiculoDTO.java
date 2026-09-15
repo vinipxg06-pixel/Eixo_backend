@@ -7,11 +7,8 @@ import lombok.Data;
 @Data
 public class VeiculoDTO {
 
-    @NotBlank(message = "Marca é obrigatória")
-    private String marca;
-
     @NotBlank(message = "Modelo é obrigatório")
-    private String modelo;
+    private Long idModelo;
 
     @NotBlank(message = "Ano é obrigatório")
     @Size(min = 4, max = 4, message = "Ano deve ter 4 dígitos")
