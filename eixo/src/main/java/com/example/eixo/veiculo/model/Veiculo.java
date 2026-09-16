@@ -1,6 +1,8 @@
 package com.example.eixo.veiculo.model;
 
 import com.example.eixo.cliente.model.Cliente;
+import com.example.eixo.marcasmodelos.model.Marca;
+import com.example.eixo.marcasmodelos.model.Modelo;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -10,26 +12,26 @@ import lombok.Data;
 public class Veiculo {
 
     @Id
+    @Column(name = "id_veiculos", nullable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id_veiculo", nullable = false)
-    private Long id;
 
-    @Column( nullable = false, length = 50)
-    private String marca;
+    private Long idVeiculo;
 
-    @Column(nullable = false, length = 50)
-    private String modelo;
+    @ManyToOne
+    @JoinColumn(name = "modelos_veiculo_id_modelo",nullable = false)
+    private Modelo modelo;
 
-    @Column(nullable = false, length = 4)
+
+    @Column(name = "ano",nullable = false, length = 4)
     private String ano;
 
-    @Column(nullable = false, unique = true, length = 8)
+    @Column(name = "placa", nullable = false, unique = true, length = 8)
     private String placa;
 
-    @Column(length = 30)
+    @Column(name = "cor", length = 30)
     private String cor;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "cliente_id", nullable = false)
+    @JoinColumn(name = "cliente_id_cliente", nullable = false)
     private Cliente cliente;
 }
