@@ -2,6 +2,7 @@ package com.example.eixo.orcamento.service;
 
 import com.example.eixo.cliente.model.Cliente;
 import com.example.eixo.cliente.repository.ClienteRepository;
+import com.example.eixo.excecao.excecoespersonalizadas.RecursoNaoEncontrado;
 import com.example.eixo.oficina.model.Oficina;
 import com.example.eixo.oficina.repository.OficinaRepository;
 import com.example.eixo.orcamento.api.request.OrcamentoRequest;
@@ -28,8 +29,9 @@ public class OrcamentoService {
     private ClienteRepository clienteRepository;
     private VeiculoRepository veiculoRepository;
 
-    public OrcamentoResponse encontrarOrcamentoPeloId(Long id){
-        Orcamento orcamentoEncontrado = orcamentoRepository.findById(id).get();
+    public OrcamentoResponse encontrarOrcamentoPeloId(Long orcamentoId){
+        Orcamento orcamentoEncontrado = orcamentoRepository.findById(orcamentoId)
+                .orElseThrow(() -> new RecursoNaoEncontrado("orcamento de id: " + orcamentoId + " não encontrado"));
         return orcamentoMapper.transformarEmResposta(orcamentoEncontrado);
     }
 
@@ -73,7 +75,8 @@ public class OrcamentoService {
     }
 
     public OrcamentoResponse alterarStatus(StatusOrcamento status, Long orcamentoId){
-        Orcamento orcamento = orcamentoRepository.findById(orcamentoId).get();
+        Orcamento orcamento = orcamentoRepository.findById(orcamentoId)
+                .orElseThrow(() -> new RecursoNaoEncontrado("orcamento de id: " + orcamentoId + " não encontrado"));
         orcamento.setStatus(status);
         return orcamentoMapper.transformarEmResposta(orcamento);
     }

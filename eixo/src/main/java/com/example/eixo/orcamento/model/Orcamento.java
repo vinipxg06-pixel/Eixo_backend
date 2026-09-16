@@ -12,7 +12,7 @@ import com.example.eixo.cliente.model.Cliente;
 import java.time.LocalDateTime;
 
 @NoArgsConstructor
-@Table(name = "oficinas")
+@Table(name = "orcamentos")
 @Entity
 @Data
 public class Orcamento {

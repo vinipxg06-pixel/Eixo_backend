@@ -20,7 +20,7 @@ public class OrcamentoMapper {
     public OrcamentoResponse transformarEmResposta(Orcamento orcamento){
         return new OrcamentoResponse(
                 orcamento.getIdOrcamento(),
-                orcamento.getVeiculo().getId(),
+                orcamento.getVeiculo().getIdVeiculo(),
                 orcamento.getCliente().getClienteId(),
                 orcamento.getStatus(),
                 orcamento.getValorTotal(),
