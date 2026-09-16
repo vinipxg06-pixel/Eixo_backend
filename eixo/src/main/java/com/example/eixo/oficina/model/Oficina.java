@@ -2,6 +2,7 @@ package com.example.eixo.oficina.model;
 
 import com.example.eixo.cliente.model.Cliente;
 import com.example.eixo.usuarios.model.Usuario;
+import com.example.eixo.veiculo.model.Veiculo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -54,6 +55,9 @@ public class Oficina {
     @JsonIgnore
     private List<Usuario> listaUsuarios = new ArrayList<>();
 
+    @OneToMany(mappedBy = "oficina")
+    @JsonIgnore
+    private  List<Veiculo> veiculos = new ArrayList<>();
 
 }
 

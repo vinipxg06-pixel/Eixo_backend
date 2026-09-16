@@ -14,6 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -36,8 +37,16 @@ import java.util.stream.Collectors;
             return mapper.paraResposta(veiculoRepository.save(veiculo));
         }
 
-        public List<VeiculoRespostaDTO> listarTodos() {
-            return veiculoRepository.findAll().stream().map(mapper::paraResposta).collect(Collectors.toList());
+        public List<VeiculoRespostaDTO> listarTodos(Long oficinaId) {
+            List<Veiculo> veiculos = veiculoRepository.findAllByOficina_OficinaId(oficinaId);
+            List<VeiculoRespostaDTO> respostaVeiculos = new ArrayList<>();
+
+            for (Veiculo veiculo : veiculos) {
+                VeiculoRespostaDTO veiculos1 = mapper.paraResposta(veiculo);
+                respostaVeiculos.add(veiculos1);
+            }
+
+            return respostaVeiculos;
         }
 
         public VeiculoRespostaDTO buscarPorId(Long id) {
@@ -64,6 +73,7 @@ import java.util.stream.Collectors;
             v.setAno(dto.getAno());
             v.setPlaca(dto.getPlaca());
             v.setCor(dto.getCor());
+            v.setCombustivel(dto.getCombustivel());
             v.setCliente(cliente);
             return mapper.paraResposta(veiculoRepository.save(v));
         }
