@@ -1,14 +1,10 @@
 package com.example.eixo.usuarios.exception;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
-import org.springframework.dao.DataIntegrityViolationException;
+import com.example.eixo.usuarios.exception.excecoesPersonalizadas.EmailJaCadastrado;
+import com.example.eixo.usuarios.exception.excecoesPersonalizadas.OficinaNaoEncontrada;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.ErrorResponse;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.time.Instant;
@@ -20,6 +16,12 @@ public class ExceptionController {
     public ResponseEntity<ErroResponse> emailDuplicado(EmailJaCadastrado x) {
         return ResponseEntity.status(HttpStatus.CONFLICT)
                 .body(new ErroResponse(409, "E-mail já cadastrado", Instant.now()));
+    }
+
+    @ExceptionHandler(OficinaNaoEncontrada.class)
+    public ResponseEntity<ErroResponse> oficinaNaoEncontrada(OficinaNaoEncontrada x){
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(new ErroResponse(404,"Oficina não encontrada", Instant.now()));
     }
 
 

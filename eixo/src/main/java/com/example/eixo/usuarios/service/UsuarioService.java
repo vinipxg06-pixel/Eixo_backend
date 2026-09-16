@@ -3,13 +3,16 @@ package com.example.eixo.usuarios.service;
 import com.example.eixo.oficina.model.Oficina;
 import com.example.eixo.oficina.repository.OficinaRepository;
 import com.example.eixo.usuarios.api.dto.*;
-import com.example.eixo.usuarios.exception.EmailJaCadastrado;
+import com.example.eixo.usuarios.exception.excecoesPersonalizadas.EmailJaCadastrado;
+import com.example.eixo.usuarios.exception.excecoesPersonalizadas.OficinaNaoEncontrada;
 import com.example.eixo.usuarios.mapper.UsuarioMapper;
 import com.example.eixo.usuarios.model.UsuarioStatus;
 import com.example.eixo.usuarios.model.Usuario;
 import com.example.eixo.usuarios.repository.UsuarioRepository;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -67,10 +70,12 @@ public class UsuarioService {
 
     public UsuarioResponse updateUsuario(UsuarioUpdateRequest usuarioUpdateRequest, Long id){
         Usuario usuario = usuarioRepository.findById(id).get();
+
         usuario.setEmail(usuarioUpdateRequest.email());
         usuario.setNomeUsuario(usuarioUpdateRequest.nomeUsuario());
         usuario.setSenha(usuarioUpdateRequest.senha());
         usuario.setUsuarioStatus(usuarioUpdateRequest.usuarioStatus());
+        usuario.setUpdatedAt(LocalDateTime.now());
         Usuario usuarioAtualizado = usuarioRepository.save(usuario);
         UsuarioResponse usuarioResponse = usuarioMapper.toResponse(usuario);
 
@@ -84,7 +89,7 @@ public class UsuarioService {
 
     public UsuarioResponse saveUsuario(UsuarioRequest usuarioRequest){
         Usuario usuario = usuarioMapper.toEntity(usuarioRequest);
-        Oficina oficina = oficinaRepository.findById(usuarioRequest.oficinaId()).orElseThrow(() -> new RuntimeException("Oficina nao encontrada"));
+        Oficina oficina = oficinaRepository.findById(usuarioRequest.oficinaId()).orElseThrow(() -> new OficinaNaoEncontrada("Oficina nao encontrada"));
         if (usuarioRepository.existsByEmail(usuario.getEmail())) {
             throw new EmailJaCadastrado("Email ja cadastrado");
         }
