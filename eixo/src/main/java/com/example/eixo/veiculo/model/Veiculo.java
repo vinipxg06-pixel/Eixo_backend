@@ -23,6 +23,7 @@ public class Veiculo {
     @Id
     @Column(name = "id_veiculos", nullable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+
     private Long idVeiculo;
 
     @JoinColumn(name = "oficinas_id_oficinas", nullable = false)
@@ -31,6 +32,7 @@ public class Veiculo {
     @ManyToOne
     @JoinColumn(name = "modelos_veiculo_id_modelo",nullable = false)
     private Modelo modelo;
+
 
     @Column(name = "ano",nullable = false, length = 4)
     private String ano;
