@@ -20,8 +20,8 @@ public class OrcamentoController {
     }
 
     @GetMapping
-    public ResponseEntity<List<OrcamentoResponse>> listaOrcamentos(){
-        return ResponseEntity.ok().body(orcamentoService.listaOrcamentos());
+    public ResponseEntity<List<OrcamentoResponse>> listaOrcamentos(Long oficinaId){
+        return ResponseEntity.ok().body(orcamentoService.listaOrcamentos(oficinaId));
     }
 
     @GetMapping("/{id}")

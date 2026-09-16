@@ -15,8 +15,6 @@ public record OrcamentoRequest(
         double maoDeObra,
         @NotBlank
         double valorTotal,
-        @NotBlank
-        StatusOrcamento status,
 
         String descricao
 
