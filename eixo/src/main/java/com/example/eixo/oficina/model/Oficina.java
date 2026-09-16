@@ -3,6 +3,7 @@ package com.example.eixo.oficina.model;
 import com.example.eixo.cliente.model.Cliente;
 import com.example.eixo.pecasestoque.model.PecaEstoque;
 import com.example.eixo.usuarios.model.Usuario;
+import com.example.eixo.veiculo.model.Veiculo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;

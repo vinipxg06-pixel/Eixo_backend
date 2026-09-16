@@ -1,8 +1,12 @@
 package com.example.eixo.veiculo.api.dto;
 
+import com.example.eixo.veiculo.model.Combustivel;
+import com.example.eixo.veiculo.model.Cor;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
+
+import java.nio.charset.CoderResult;
 
 @Data
 public class VeiculoDTO {
@@ -17,7 +21,11 @@ public class VeiculoDTO {
     @NotBlank(message = "Placa é obrigatória")
     private String placa;
 
-    private String cor;
+    private Cor cor;
+
+    private Long quilometragem;
+
+    private Combustivel combustivel;
 
     private Long clienteId;
 }
