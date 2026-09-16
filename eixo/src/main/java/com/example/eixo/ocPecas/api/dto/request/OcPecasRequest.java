@@ -12,7 +12,9 @@ public record OcPecasRequest(
         @NotBlank
         Integer quantidade
 
-        Long idPe
+
+
+        //terminar request e fazer service
 ) {
     public OcPecasRequest{
 
