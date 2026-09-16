@@ -9,15 +9,12 @@ import org.springframework.stereotype.Service;
 @Service
 public class VeiculoMapper {
 
-    public Veiculo paraEntidade(VeiculoDTO dto, Cliente cliente) {
+    public Veiculo paraEntidade(VeiculoDTO dto) {
         Veiculo v = new Veiculo();
 
-        v.setMarca(dto.getMarca());
-        v.setModelo(dto.getModelo());
         v.setAno(dto.getAno());
         v.setPlaca(dto.getPlaca());
         v.setCor(dto.getCor());
-        v.setCliente(cliente);
 
         return v;
     }
@@ -25,13 +22,11 @@ public class VeiculoMapper {
     public VeiculoRespostaDTO paraResposta(Veiculo v) {
         VeiculoRespostaDTO r = new VeiculoRespostaDTO();
 
-        r.setId(v.getId());
-        r.setMarca(v.getMarca());
-        r.setModelo(v.getModelo());
+        r.setNomeMarca(v.getModelo().getMarca().getNomeMarca());
+        r.setNomeModelo(v.getModelo().getNomeModelo());
         r.setAno(v.getAno());
         r.setPlaca(v.getPlaca());
         r.setCor(v.getCor());
-        r.setClienteId(v.getCliente().getClienteId());
         r.setNomeCliente(v.getCliente().getNomeCliente());
 
         return r;
