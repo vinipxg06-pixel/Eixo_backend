@@ -1,5 +1,7 @@
 package com.example.eixo.veiculo.api.dto;
 
+import com.example.eixo.veiculo.model.Combustivel;
+import com.example.eixo.veiculo.model.Cor;
 import lombok.Data;
 
     @Data
@@ -8,7 +10,9 @@ import lombok.Data;
         private String nomeMarca;
         private String nomeModelo;
         private String ano;
+        private Combustivel combustivel;
+        private Long quilometragem;
         private String placa;
-        private String cor;
+        private Cor cor;
         private String nomeCliente;
 }

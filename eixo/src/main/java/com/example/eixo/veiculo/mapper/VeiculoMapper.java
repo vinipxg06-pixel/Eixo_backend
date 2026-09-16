@@ -3,6 +3,7 @@ package com.example.eixo.veiculo.mapper;
 import com.example.eixo.cliente.model.Cliente;
 import com.example.eixo.veiculo.api.dto.VeiculoDTO;
 import com.example.eixo.veiculo.api.dto.VeiculoRespostaDTO;
+import com.example.eixo.veiculo.model.Cor;
 import com.example.eixo.veiculo.model.Veiculo;
 import org.springframework.stereotype.Service;
 
@@ -15,6 +16,8 @@ public class VeiculoMapper {
         v.setAno(dto.getAno());
         v.setPlaca(dto.getPlaca());
         v.setCor(dto.getCor());
+        v.setCombustivel(dto.getCombustivel());
+        v.setQuilometragem(dto.getQuilometragem());
 
         return v;
     }
@@ -27,6 +30,8 @@ public class VeiculoMapper {
         r.setAno(v.getAno());
         r.setPlaca(v.getPlaca());
         r.setCor(v.getCor());
+        r.setCombustivel(r.getCombustivel());
+        r.setQuilometragem(r.getQuilometragem());
         r.setNomeCliente(v.getCliente().getNomeCliente());
 
         return r;
