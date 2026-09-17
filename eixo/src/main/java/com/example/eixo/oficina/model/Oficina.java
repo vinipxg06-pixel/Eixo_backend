@@ -8,9 +8,7 @@ import com.example.eixo.veiculo.model.Veiculo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -60,7 +58,14 @@ public class Oficina {
     @OneToMany(mappedBy = "oficina")
     @JsonIgnore
     private List<Orcamento> listaOrcamentos = new ArrayList<>();
+
+    @OneToMany(mappedBy = "oficina")
+    @JsonIgnore
     private List<PecaEstoque> listaPecasEstoque = new ArrayList<>();
+
+    @OneToMany(mappedBy = "oficina")
+    @JsonIgnore
+    private List<Veiculo> listaVeiculos = new ArrayList<>();
 
 }
 

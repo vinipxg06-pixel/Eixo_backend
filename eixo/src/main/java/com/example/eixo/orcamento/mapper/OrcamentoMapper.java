@@ -11,9 +11,9 @@ public class OrcamentoMapper {
     public Orcamento transformarEmEntidade(OrcamentoRequest orcamentoRequest){
         Orcamento orcamento = new Orcamento();
 
-        orcamento.setStatus(orcamentoRequest.status());
         orcamento.setMaoDeObra(orcamentoRequest.maoDeObra());
         orcamento.setValorTotal(orcamentoRequest.valorTotal());
+        orcamento.setDescricao(orcamentoRequest.descricao());
         return orcamento;
     }
 

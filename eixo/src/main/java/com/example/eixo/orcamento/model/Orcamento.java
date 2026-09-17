@@ -9,6 +9,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 import com.example.eixo.oficina.model.Oficina;
 import com.example.eixo.cliente.model.Cliente;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @NoArgsConstructor
@@ -27,13 +28,13 @@ public class Orcamento {
     private StatusOrcamento status;
 
     @Column(name = "mao_obra", nullable = false)
-    private double maoDeObra;
+    private BigDecimal maoDeObra;
 
     @Column(name = "descricao")
     private String descricao;
 
     @Column(name = "valor_total")
-    private double valorTotal;
+    private BigDecimal valorTotal;
 
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)

@@ -21,6 +21,11 @@ public class ModeloService {
         this.modeloMapper = modeloMapper;
     }
 
+    public Modelo encontrarPeloId(Long id){
+        return modeloRepository.findById(id)
+                .orElseThrow(() -> new RecursoNaoEncontrado("Modelo com id: " + id + " não encontrado"));
+    }
+
     public List<ModeloResponse> findAllModelos(){
         List<Modelo> modelos = modeloRepository.findAll();
         List<ModeloResponse> modelosResposta = new ArrayList<>();
@@ -44,8 +49,7 @@ public class ModeloService {
     }
 
     public ModeloResponse findModeloById(Long id){
-        Modelo modeloEncontrado = modeloRepository.findById(id)
-                .orElseThrow(() -> new RecursoNaoEncontrado("Marca com id: " + id + " não encontrada"));
+        Modelo modeloEncontrado = encontrarPeloId(id);
         return modeloMapper.toResponse(modeloEncontrado);
     }
 }

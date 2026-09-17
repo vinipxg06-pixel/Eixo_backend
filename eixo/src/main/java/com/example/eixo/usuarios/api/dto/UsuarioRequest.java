@@ -12,8 +12,6 @@ public record UsuarioRequest(
     @NotBlank(message = "O email e obrigatorio")
     String email,
     @NotBlank(message = "Senha e obrigatoria")
-    String senha,
-    @NotBlank
-    Long oficinaId
+    String senha
 ){
 }
