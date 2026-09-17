@@ -1,6 +1,7 @@
 package com.example.eixo.orcamento.api;
 
 import com.example.eixo.orcamento.api.request.OrcamentoRequest;
+import com.example.eixo.orcamento.api.request.OrcamentoStatusRequest;
 import com.example.eixo.orcamento.api.response.OrcamentoResponse;
 import com.example.eixo.orcamento.model.StatusOrcamento;
 import com.example.eixo.orcamento.service.OrcamentoService;
@@ -35,8 +36,8 @@ public class OrcamentoController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<OrcamentoResponse> atualizarOrcamento(OrcamentoRequest orcamentoRequest, Long orcamentoId){
-        return ResponseEntity.ok().body(orcamentoService.atualizarOrcamento(orcamentoRequest, orcamentoId));
+    public ResponseEntity<OrcamentoResponse> atualizarOrcamento(OrcamentoStatusRequest orcamentoStatusRequest, Long orcamentoId){
+        return ResponseEntity.ok().body(orcamentoService.atualizarOrcamento(orcamentoStatusRequest, orcamentoId));
     }
 
     @PatchMapping("/{id}/alterarStatus")

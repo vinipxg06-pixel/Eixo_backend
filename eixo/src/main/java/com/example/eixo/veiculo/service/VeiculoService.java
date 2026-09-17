@@ -16,7 +16,6 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
     @Service
     @RequiredArgsConstructor
@@ -31,10 +30,9 @@ import java.util.stream.Collectors;
             if (veiculoRepository.findByPlaca(dto.getPlaca()).isPresent()) {
                 throw new ResponseStatusException(HttpStatus.CONFLICT, "Placa já cadastrada");
             }
-            Cliente cliente = clienteRepository.findById(dto.getClienteId())
-                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Cliente não encontrado"));
             Veiculo veiculo = mapper.paraEntidade(dto);
-            return mapper.paraResposta(veiculoRepository.save(veiculo));
+            veiculoRepository.save(veiculo);
+            return mapper.paraResposta(veiculo);
         }
 
         public List<VeiculoRespostaDTO> listarTodos(Long oficinaId) {
@@ -49,21 +47,26 @@ import java.util.stream.Collectors;
             return respostaVeiculos;
         }
 
-        public VeiculoRespostaDTO buscarPorId(Long id) {
-            return veiculoRepository.findById(id)
-                    .map(mapper::paraResposta)
+        public VeiculoRespostaDTO buscarPorId(Long veiculoId) {
+            Veiculo veiculo = veiculoRepository.findById(veiculoId)
                     .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Veículo não encontrado"));
+            return mapper.paraResposta(veiculo);
         }
 
         public List<VeiculoRespostaDTO> buscarPorCliente(Long clienteId) {
-            return veiculoRepository.findByCliente_ClienteId(clienteId)
-                    .stream()
-                    .map(mapper::paraResposta)
-                    .collect(Collectors.toList());
+            List<Veiculo> veiculosCliente = veiculoRepository.findByCliente_ClienteId(clienteId);
+            List<VeiculoRespostaDTO> veiculoClienteResposta = new ArrayList<>();
+
+            for (Veiculo veiculo : veiculosCliente) {
+                VeiculoRespostaDTO veiculos1 = mapper.paraResposta(veiculo);
+                veiculoClienteResposta.add(veiculos1);
+            }
+
+            return veiculoClienteResposta;
         }
 
-        public VeiculoRespostaDTO atualizar(Long id, VeiculoDTO dto) {
-            Veiculo v = veiculoRepository.findById(id)
+        public VeiculoRespostaDTO atualizar(Long veiculoId, VeiculoDTO dto) {
+            Veiculo v = veiculoRepository.findById(veiculoId)
                     .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Veículo não encontrado"));
             Cliente cliente = clienteRepository.findById(dto.getClienteId())
                     .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Cliente não encontrado"));

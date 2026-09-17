@@ -60,6 +60,9 @@ public class Oficina {
     @OneToMany(mappedBy = "oficina")
     @JsonIgnore
     private List<Orcamento> listaOrcamentos = new ArrayList<>();
+
+    @OneToMany(mappedBy = "oficina")
+    @JsonIgnore
     private List<PecaEstoque> listaPecasEstoque = new ArrayList<>();
 
 }

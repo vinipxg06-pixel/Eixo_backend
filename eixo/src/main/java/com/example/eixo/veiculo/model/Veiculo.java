@@ -1,19 +1,14 @@
 package com.example.eixo.veiculo.model;
 
 import com.example.eixo.cliente.model.Cliente;
-import com.example.eixo.marcasmodelos.model.Marca;
 import com.example.eixo.marcasmodelos.model.Modelo;
 import com.example.eixo.oficina.model.Oficina;
-import com.example.eixo.usuarios.model.Usuario;
-import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
-
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 @Data
 @Entity
@@ -21,12 +16,11 @@ import java.util.List;
 public class Veiculo {
 
     @Id
-    @Column(name = "id_veiculos", nullable = false)
+    @Column(name = "id_veiculo", nullable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long veiculoId;
 
-    private Long idVeiculo;
-
-    @JoinColumn(name = "oficinas_id_oficinas", nullable = false)
+    @JoinColumn(name = "oficinas_id_oficina", nullable = false)
     private Oficina oficina;
 
     @ManyToOne
@@ -37,7 +31,7 @@ public class Veiculo {
     @Column(name = "ano",nullable = false, length = 4)
     private String ano;
 
-    @Column(name = "quilometragem", nullable = true)
+    @Column(name = "quilometragem")
     private Long quilometragem;
 
     @Column(name = "placa", nullable = false, unique = true, length = 8)
@@ -50,7 +44,7 @@ public class Veiculo {
     private Combustivel combustivel;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "cliente_id_cliente", nullable = false)
+    @JoinColumn(name = "clientes_id_cliente", nullable = false)
     private Cliente cliente;
 
     @CreationTimestamp

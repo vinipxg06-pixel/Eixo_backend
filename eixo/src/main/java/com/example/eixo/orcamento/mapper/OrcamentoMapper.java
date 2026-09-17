@@ -11,7 +11,6 @@ public class OrcamentoMapper {
     public Orcamento transformarEmEntidade(OrcamentoRequest orcamentoRequest){
         Orcamento orcamento = new Orcamento();
 
-        orcamento.setStatus(orcamentoRequest.status());
         orcamento.setMaoDeObra(orcamentoRequest.maoDeObra());
         orcamento.setValorTotal(orcamentoRequest.valorTotal());
         return orcamento;
@@ -20,7 +19,7 @@ public class OrcamentoMapper {
     public OrcamentoResponse transformarEmResposta(Orcamento orcamento){
         return new OrcamentoResponse(
                 orcamento.getIdOrcamento(),
-                orcamento.getVeiculo().getIdVeiculo(),
+                orcamento.getVeiculo().getVeiculoId(),
                 orcamento.getCliente().getClienteId(),
                 orcamento.getStatus(),
                 orcamento.getValorTotal(),

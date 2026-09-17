@@ -1,9 +1,7 @@
 package com.example.eixo.veiculo.mapper;
 
-import com.example.eixo.cliente.model.Cliente;
 import com.example.eixo.veiculo.api.dto.VeiculoDTO;
 import com.example.eixo.veiculo.api.dto.VeiculoRespostaDTO;
-import com.example.eixo.veiculo.model.Cor;
 import com.example.eixo.veiculo.model.Veiculo;
 import org.springframework.stereotype.Service;
 
