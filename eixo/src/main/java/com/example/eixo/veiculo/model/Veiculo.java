@@ -21,37 +21,26 @@ import java.util.List;
 public class Veiculo {
 
     @Id
-    @Column(name = "id_veiculos", nullable = false)
+    @Column(name = "id_veiculo", nullable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-
     private Long idVeiculo;
 
-    @JoinColumn(name = "oficinas_id_oficinas", nullable = false)
-    private Oficina oficina;
+    @Column(name = "placa", nullable = false, unique = true, length = 8)
+    private String placa;
 
-    @ManyToOne
-    @JoinColumn(name = "modelos_veiculo_id_modelo",nullable = false)
-    private Modelo modelo;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "combustivel", nullable = false)
+    private Combustivel combustivel;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "cor", length = 30)
+    private Cor cor;
 
     @Column(name = "ano",nullable = false, length = 4)
     private String ano;
 
     @Column(name = "quilometragem", nullable = true)
     private Long quilometragem;
-
-    @Column(name = "placa", nullable = false, unique = true, length = 8)
-    private String placa;
-
-    @Column(name = "cor", length = 30)
-    private Cor cor;
-
-    @Column(name = "combustivel", nullable = false)
-    private Combustivel combustivel;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "cliente_id_cliente", nullable = false)
-    private Cliente cliente;
 
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)
@@ -60,4 +49,17 @@ public class Veiculo {
     @UpdateTimestamp
     @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
+
+    @ManyToOne
+    @JoinColumn(name = "oficinas_id_oficina", nullable = false)
+    private Oficina oficina;
+
+    @ManyToOne
+    @JoinColumn(name = "modelos_veiculo_id_modelo",nullable = false)
+    private Modelo modelo;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "clientes_id_cliente", nullable = false)
+    private Cliente cliente;
+
 }

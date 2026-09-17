@@ -19,9 +19,13 @@ public class OficinaService {
     private final OficinaRepository oficinaRepository;
     private final OficinaMapper oficinaMapper;
 
+    public Oficina findById(Long id){
+        return oficinaRepository.findById(id)
+                .orElseThrow(() -> new RecursoNaoEncontrado("Oficina com id: " + id + " não encontrada"));
+    }
+
     public OficinaResponse encontrarOficinaPeloId(Long id){
-       Oficina oficinaEncontrada = oficinaRepository.findById(id)
-               .orElseThrow(() -> new RecursoNaoEncontrado("Oficina com id: " + id + " não encontrada"));
+       Oficina oficinaEncontrada = findById(id);
        OficinaResponse oficinaResponse = oficinaMapper.transformarEmResposta(oficinaEncontrada);
        return oficinaResponse;
     }
@@ -38,12 +42,12 @@ public class OficinaService {
     }
 
     public void deletarOficina(Long id){
-        Oficina oficinaDeletar = oficinaRepository.findById(id).get();
+        Oficina oficinaDeletar = findById(id);
         oficinaRepository.delete(oficinaDeletar);
     }
 
     public OficinaResponse atualizarOficina(OficinaRequest oficinaRequest, Long id) {
-        Oficina atualizar = oficinaRepository.findById(id).get();
+        Oficina atualizar = findById(id);
         atualizar.setNomeOficina(oficinaRequest.nomeOficina());
         atualizar.setTelefone(oficinaRequest.telefone());
         atualizar.setEmail(oficinaRequest.email());
