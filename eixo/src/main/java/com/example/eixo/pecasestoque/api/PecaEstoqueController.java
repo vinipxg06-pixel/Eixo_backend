@@ -33,13 +33,13 @@ public class PecaEstoqueController {
     }
 
     @PostMapping
-    public ResponseEntity<PecaEstoqueResponse> postPeca(@RequestBody PecaEstoqueRequest pecaEstoqueRequest){
-        return ResponseEntity.ok().body(pecaEstoqueService.savePecaEstoque(pecaEstoqueRequest));
+    public ResponseEntity<PecaEstoqueResponse> postPeca(@Valid @RequestBody PecaEstoqueRequest pecaEstoqueRequest, @PathVariable Long oficinaId){
+        return ResponseEntity.ok().body(pecaEstoqueService.savePecaEstoque(pecaEstoqueRequest, oficinaId));
     }
 
     @PutMapping("/{estoqueId}")
-    public ResponseEntity<PecaEstoqueResponse> putPeca(@RequestBody PecaEstoqueRequest pecaEstoqueRequest, @PathVariable Long estoqueId){
-        return ResponseEntity.ok().body(pecaEstoqueService.updatePecaEstoque(pecaEstoqueRequest, estoqueId));
+    public ResponseEntity<PecaEstoqueResponse> putPeca(@Valid @RequestBody PecaEstoqueRequest pecaEstoqueRequest, @PathVariable Long estoqueId, @PathVariable Long oficinaId){
+        return ResponseEntity.ok().body(pecaEstoqueService.updatePecaEstoque(pecaEstoqueRequest, estoqueId, oficinaId));
     }
 
     @DeleteMapping("/{estoqueId}")
@@ -52,7 +52,6 @@ public class PecaEstoqueController {
     public ResponseEntity<PecaEstoqueResponse> removerEstoque(@PathVariable Long estoqueId, @Valid @RequestBody PecaEstoqueRemoverRequest request) {
         return ResponseEntity.ok(pecaEstoqueService.removerPecaEstoque(estoqueId, request.quantidade()));
     }
-
 
     @PatchMapping("/{estoqueId}/adicionar")
     public ResponseEntity<PecaEstoqueResponse> adicionarEstoque(@PathVariable Long estoqueId, @Valid @RequestBody PecaEstoqueAdicionarRequest pecaEstoqueAdicionarRequest) {

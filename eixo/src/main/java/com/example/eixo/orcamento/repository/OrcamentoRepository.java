@@ -8,6 +8,7 @@ import java.util.List;
 
 @Repository
 public interface OrcamentoRepository extends JpaRepository<Orcamento, Long> {
+
     List<Orcamento> findAllByOficina_oficinaId(Long oficinaId);
 
 }

@@ -2,13 +2,14 @@ package com.example.eixo.orcamento.api.response;
 
 import com.example.eixo.orcamento.model.StatusOrcamento;
 
-public record OrcamentoResponse(
+import java.math.BigDecimal;
 
+public record OrcamentoResponse(
         Long orcamentoId,
         Long veiculoId,
         Long clienteId,
         StatusOrcamento status,
-        double valorTotal,
+        BigDecimal valorTotal,
         String descricao
 ) {
 }

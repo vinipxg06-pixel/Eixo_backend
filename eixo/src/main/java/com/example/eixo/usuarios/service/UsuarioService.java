@@ -1,7 +1,8 @@
 package com.example.eixo.usuarios.service;
 
+import com.example.eixo.excecao.excecoespersonalizadas.RecursoNaoEncontrado;
 import com.example.eixo.oficina.model.Oficina;
-import com.example.eixo.oficina.repository.OficinaRepository;
+import com.example.eixo.oficina.service.OficinaService;
 import com.example.eixo.usuarios.api.dto.*;
 import com.example.eixo.usuarios.exception.EmailJaCadastrado;
 import com.example.eixo.usuarios.mapper.UsuarioMapper;
@@ -18,12 +19,16 @@ public class UsuarioService {
 
     private final UsuarioMapper usuarioMapper;
     private final UsuarioRepository usuarioRepository;
-    private final OficinaRepository oficinaRepository;
+    private final OficinaService oficinaService;
 
-    public UsuarioService(UsuarioMapper usuarioMapper, UsuarioRepository usuarioRepository, OficinaRepository oficinaRepository) {
+    public UsuarioService(UsuarioMapper usuarioMapper, UsuarioRepository usuarioRepository, OficinaService oficinaService) {
         this.usuarioMapper = usuarioMapper;
         this.usuarioRepository = usuarioRepository;
-        this.oficinaRepository = oficinaRepository;
+        this.oficinaService = oficinaService;
+    }
+
+    public Usuario encontrePeloId(Long id){
+        return usuarioRepository.findById(id).orElseThrow(() -> new RecursoNaoEncontrado("Usuário com Id: " + id + " não encontrado"));
     }
 
     public List<UsuarioResponse> findAllUsuarios(){
@@ -51,11 +56,11 @@ public class UsuarioService {
     }
 
     public LoginResponse login(LoginRequest loginRequest){
-        Usuario usuario = usuarioRepository.findByEmail(loginRequest.email()).orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+        Usuario usuario = usuarioRepository.findByEmail(loginRequest.email()).orElseThrow(() -> new RecursoNaoEncontrado("Usuário não encontrado"));
         if(!usuario.getSenha().equals(loginRequest.senha()) ) {
             throw new RuntimeException("Senha incorreta");
         }
-        if(!usuario.getUsuarioStatus().equals(UsuarioStatus.ATIVO)){
+        if(!usuario.getUsuarioStatus().equals(UsuarioStatus.Ativo)){
             throw new RuntimeException("usuario inativo");
         }
         LoginResponse loginResponse = usuarioMapper.toLoginResponse(usuario);
@@ -63,10 +68,8 @@ public class UsuarioService {
         return loginResponse;
     }
 
-
-
     public UsuarioResponse updateUsuario(UsuarioUpdateRequest usuarioUpdateRequest, Long id){
-        Usuario usuario = usuarioRepository.findById(id).get();
+        Usuario usuario = encontrePeloId(id);
         usuario.setEmail(usuarioUpdateRequest.email());
         usuario.setNomeUsuario(usuarioUpdateRequest.nomeUsuario());
         usuario.setSenha(usuarioUpdateRequest.senha());
@@ -82,13 +85,13 @@ public class UsuarioService {
         return usuarioMapper.toResponse(usuarioEncontrado);
     }
 
-    public UsuarioResponse saveUsuario(UsuarioRequest usuarioRequest){
+    public UsuarioResponse saveUsuario(UsuarioRequest usuarioRequest, Long oficinaId){
         Usuario usuario = usuarioMapper.toEntity(usuarioRequest);
-        Oficina oficina = oficinaRepository.findById(usuarioRequest.oficinaId()).orElseThrow(() -> new RuntimeException("Oficina nao encontrada"));
+        Oficina oficina = oficinaService.findById(oficinaId);
         if (usuarioRepository.existsByEmail(usuario.getEmail())) {
             throw new EmailJaCadastrado("Email ja cadastrado");
         }
-        usuario.setUsuarioStatus(UsuarioStatus.ATIVO);
+        usuario.setUsuarioStatus(UsuarioStatus.Ativo);
         usuario.setOficina(oficina);
         Usuario usuarioSave = usuarioRepository.save(usuario);
         return usuarioMapper.toResponse(usuarioSave);

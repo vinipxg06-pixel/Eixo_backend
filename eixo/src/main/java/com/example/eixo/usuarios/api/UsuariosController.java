@@ -4,6 +4,7 @@ package com.example.eixo.usuarios.api
 import com.example.eixo.usuarios.api.dto.*;
 import com.example.eixo.usuarios.model.Usuario;
 import com.example.eixo.usuarios.service.UsuarioService;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -32,17 +33,18 @@ public class UsuariosController {
         return ResponseEntity.ok().body(usuarioService.findAllUsuariosByOficinaId(id));
     }
 
-    @PostMapping
-    public ResponseEntity<UsuarioResponse>postUsuario(@RequestBody UsuarioRequest usuariosRequest){
-        return ResponseEntity.status(201).body(usuarioService.saveUsuario(usuariosRequest));
+    @PostMapping("/oficinaUsuarios/{oficinaId}")
+    public ResponseEntity<UsuarioResponse>postUsuario(@Valid @RequestBody UsuarioRequest usuariosRequest, @PathVariable Long oficinaId){
+        return ResponseEntity.status(201).body(usuarioService.saveUsuario(usuariosRequest, oficinaId));
     }
+
     @PostMapping("/login")
-    public ResponseEntity<LoginResponse>postLogin(@RequestBody LoginRequest loginRequest){
+    public ResponseEntity<LoginResponse>postLogin(@Valid @RequestBody LoginRequest loginRequest){
         return ResponseEntity.status(201).body(usuarioService.login(loginRequest));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<UsuarioResponse>putUsuario(@RequestBody UsuarioUpdateRequest usuarioUpdateRequest,@PathVariable Long id){
+    public ResponseEntity<UsuarioResponse>putUsuario(@Valid @RequestBody UsuarioUpdateRequest usuarioUpdateRequest, @PathVariable Long id){
         return ResponseEntity.ok().body(usuarioService.updateUsuario(usuarioUpdateRequest, id));
     }
 

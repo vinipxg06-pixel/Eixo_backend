@@ -3,7 +3,6 @@ package com.example.eixo.cliente.service;
 import com.example.eixo.cliente.api.dto.ClienteRequest;
 import com.example.eixo.cliente.api.dto.ClienteResponse;
 import com.example.eixo.cliente.api.dto.ClienteUpdateRequest;
-import com.example.eixo.cliente.mapper.ClaraClienteMapper;
 import com.example.eixo.cliente.mapper.ClienteMapper;
 import com.example.eixo.cliente.model.Cliente;
 import com.example.eixo.cliente.model.Status;
@@ -11,7 +10,7 @@ import com.example.eixo.cliente.repository.ClienteRepository;
 import com.example.eixo.excecao.excecoespersonalizadas.RecursoNaoEncontrado;
 import com.example.eixo.oficina.model.Oficina;
 import com.example.eixo.oficina.repository.OficinaRepository;
-import lombok.AllArgsConstructor;
+import com.example.eixo.oficina.service.OficinaService;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -21,32 +20,30 @@ import java.util.List;
 public class ClienteService {
 
     private final ClienteRepository clienteRepository;
-    private final OficinaRepository oficinaRepository;
-    private final ClaraClienteMapper claraClienteMapper;
+    private final OficinaService oficinaService;
     private final ClienteMapper clienteMapper;
 
-    public ClienteService(ClienteRepository clienteRepository, ClienteMapper clienteMapper, ClaraClienteMapper claraClienteMapper, OficinaRepository oficinaRepository) {
+    public ClienteService(ClienteRepository clienteRepository, ClienteMapper clienteMapper, OficinaService oficinaService) {
         this.clienteRepository = clienteRepository;
         this.clienteMapper = clienteMapper;
-        this.claraClienteMapper = claraClienteMapper;
-        this.oficinaRepository = oficinaRepository;
+        this.oficinaService = oficinaService;
+    }
+
+    public Cliente encontrarPeloId(Long id){
+        return clienteRepository.findById(id).orElseThrow(() -> new RecursoNaoEncontrado("Cliente de id: " + id + " não encontrado"));
     }
 
     public ClienteResponse saveCliente(ClienteRequest clienteRequest, Long oficinaId){
         Cliente cliente = clienteMapper.toEntity(clienteRequest);
-        Oficina oficina = oficinaRepository.findById(oficinaId)
-                .orElseThrow(() -> new RecursoNaoEncontrado("Oficina de id: " + oficinaId + " não encontrada"));
+        Oficina oficina = oficinaService.findById(oficinaId);
         cliente.setOficina(oficina);
-        cliente.setStatus(Status.ATIVO);
+        cliente.setStatus(Status.Ativo);
         Cliente clienteSalvo = clienteRepository.save(cliente);
         return clienteMapper.toResponse(clienteSalvo);
     }
 
     public ClienteResponse findClienteById(Long id, Long oficinaId) {
-        Cliente clienteEncontrado = clienteRepository
-                .findByClienteIdAndOficina_oficinaId(id, oficinaId)
-                .orElseThrow(() -> new RecursoNaoEncontrado("Cliente de id: " + id + " não encontrado"));
-
+        Cliente clienteEncontrado = encontrarPeloId(id);
         return clienteMapper.toResponse(clienteEncontrado);
     }
 
@@ -62,8 +59,7 @@ public class ClienteService {
     }
 
     public ClienteResponse updateCliente(ClienteUpdateRequest clienteUpdateRequest, Long id, Long oficinaId){
-        Cliente clienteEncontrado = clienteRepository.findByClienteIdAndOficina_oficinaId(id, oficinaId)
-                .orElseThrow(() -> new RecursoNaoEncontrado("Cliente de id: " + id + " não encontrado"));
+        Cliente clienteEncontrado = encontrarPeloId(id);
 
         clienteEncontrado.setNomeCliente(clienteUpdateRequest.nomeCliente());
         clienteEncontrado.setStatus(clienteUpdateRequest.status());

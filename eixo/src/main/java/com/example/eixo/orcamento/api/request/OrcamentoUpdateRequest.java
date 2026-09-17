@@ -7,7 +7,9 @@ import jakarta.validation.constraints.Positive;
 
 import java.math.BigDecimal;
 
-public record OrcamentoRequest(
+public record OrcamentoUpdateRequest(
+        @NotNull
+        StatusOrcamento statusOrcamento,
 
         BigDecimal maoDeObra,
 
@@ -16,5 +18,5 @@ public record OrcamentoRequest(
         BigDecimal valorTotal,
 
         String descricao
-
-) {}
+) {
+}

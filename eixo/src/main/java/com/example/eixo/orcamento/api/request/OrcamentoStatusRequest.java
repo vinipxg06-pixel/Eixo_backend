@@ -5,17 +5,6 @@ import jakarta.validation.constraints.NotBlank;
 
 public record OrcamentoStatusRequest(
         @NotBlank
-        Long clienteId,
-        @NotBlank
-        Long oficinaId,
-        @NotBlank
-        Long id,
-        @NotBlank
-        double maoDeObra,
-        @NotBlank
-        double valorTotal,
-        StatusOrcamento status,
-        String descricao
-
+        StatusOrcamento statusOrcamento
 ) {
 }

@@ -13,6 +13,7 @@ public class OrcamentoMapper {
 
         orcamento.setMaoDeObra(orcamentoRequest.maoDeObra());
         orcamento.setValorTotal(orcamentoRequest.valorTotal());
+        orcamento.setDescricao(orcamentoRequest.descricao());
         return orcamento;
     }
 

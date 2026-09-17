@@ -2,9 +2,11 @@ package com.example.eixo.orcamento.api;
 
 import com.example.eixo.orcamento.api.request.OrcamentoRequest;
 import com.example.eixo.orcamento.api.request.OrcamentoStatusRequest;
+import com.example.eixo.orcamento.api.request.OrcamentoUpdateRequest;
 import com.example.eixo.orcamento.api.response.OrcamentoResponse;
 import com.example.eixo.orcamento.model.StatusOrcamento;
 import com.example.eixo.orcamento.service.OrcamentoService;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,32 +23,32 @@ public class OrcamentoController {
     }
 
     @GetMapping
-    public ResponseEntity<List<OrcamentoResponse>> listaOrcamentos(Long oficinaId){
+    public ResponseEntity<List<OrcamentoResponse>> listaOrcamentos(@PathVariable Long oficinaId){
         return ResponseEntity.ok().body(orcamentoService.listaOrcamentos(oficinaId));
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<OrcamentoResponse> encontrarOrcamentoPeloId(Long orcamentoId){
+    @GetMapping("/{orcamentoId}")
+    public ResponseEntity<OrcamentoResponse> encontrarOrcamentoPeloId(@PathVariable Long orcamentoId){
         return ResponseEntity.ok().body(orcamentoService.encontrarOrcamentoPeloId(orcamentoId));
     }
 
-    @PostMapping
-    public ResponseEntity<OrcamentoResponse> salvarOrcamento(OrcamentoRequest orcamentoRequest, Long oficinaId, Long clienteId, Long id){
-        return ResponseEntity.status(201).body(orcamentoService.salvarOrcamento(orcamentoRequest, oficinaId, clienteId, id));
+    @PostMapping("/{clienteId}/{idVeiculo}")
+    public ResponseEntity<OrcamentoResponse> salvarOrcamento(@Valid @RequestBody OrcamentoRequest orcamentoRequest, @PathVariable Long oficinaId, @PathVariable Long clienteId, @PathVariable Long idVeiculo){
+        return ResponseEntity.status(201).body(orcamentoService.salvarOrcamento(orcamentoRequest, oficinaId, clienteId, idVeiculo));
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<OrcamentoResponse> atualizarOrcamento(OrcamentoStatusRequest orcamentoStatusRequest, Long orcamentoId){
-        return ResponseEntity.ok().body(orcamentoService.atualizarOrcamento(orcamentoStatusRequest, orcamentoId));
+    @PutMapping("/{orcamentoId}")
+    public ResponseEntity<OrcamentoResponse> atualizarOrcamento(@Valid @RequestBody OrcamentoUpdateRequest orcamentoUpdateRequest, @PathVariable Long orcamentoId){
+        return ResponseEntity.ok().body(orcamentoService.atualizarOrcamento(orcamentoUpdateRequest, orcamentoId));
     }
 
     @PatchMapping("/{id}/alterarStatus")
-    public ResponseEntity<OrcamentoResponse> alterarStatus(StatusOrcamento status, Long orcamentoId){
-        return ResponseEntity.ok().body(orcamentoService.alterarStatus(status, orcamentoId));
+    public ResponseEntity<OrcamentoResponse> alterarStatus(@Valid @RequestBody OrcamentoStatusRequest orcamentoStatusRequest, Long orcamentoId){
+        return ResponseEntity.ok().body(orcamentoService.alterarStatus(orcamentoId, orcamentoStatusRequest));
     }
 
-    @DeleteMapping("/{id}")
-    public void deletarOrcamento(Long orcamentoId){
+    @DeleteMapping("/{orcamentoId}")
+    public void deletarOrcamento(@PathVariable Long orcamentoId){
         orcamentoService.deletarOrcamento(orcamentoId);
     }
 
