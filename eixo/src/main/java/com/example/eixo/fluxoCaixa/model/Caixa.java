@@ -1,6 +1,7 @@
 package com.example.eixo.fluxoCaixa.model;
 
 import com.example.eixo.oficina.model.Oficina;
+import com.example.eixo.pecasestoque.model.PecaEstoque;
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
 
@@ -43,6 +44,7 @@ public class Caixa {
 
     @ManyToOne
     @JoinColumn (name ="pecas_estoque_id_estoque")
-    private
+    private PecaEstoque pecaEstoque;
+
 
 }
