@@ -1,8 +1,13 @@
 package com.example.eixo.marcasmodelos.model;
 
+import com.example.eixo.veiculo.model.Veiculo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Data
@@ -21,4 +26,8 @@ public class Modelo {
     @ManyToOne
     @JoinColumn(name = "marcas_veiculo_id_marca", nullable = false)
     Marca marca;
+
+    @OneToMany(mappedBy = "modelo")
+    @JsonIgnore
+    List<Veiculo> listaVeiculos = new ArrayList<>();
 }

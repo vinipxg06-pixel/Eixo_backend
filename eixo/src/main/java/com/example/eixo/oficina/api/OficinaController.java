@@ -38,7 +38,7 @@ public class OficinaController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<OficinaResponse> atualizarOficina(@Valid @RequestBody OficinaRequest oficinaRequest,@PathVariable Long id){
+    public ResponseEntity<OficinaResponse> atualizarOficina(@Valid @RequestBody OficinaRequest oficinaRequest, @PathVariable Long id){
         return ResponseEntity.ok().body(oficinaService.atualizarOficina(oficinaRequest, id));
     }
 

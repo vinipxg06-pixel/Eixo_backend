@@ -1,14 +1,14 @@
 package com.example.eixo.oficina.model;
 
 import com.example.eixo.cliente.model.Cliente;
-import com.example.eixo.fluxoCaixa.model.Caixa;
+import com.example.eixo.orcamento.model.Orcamento;
+import com.example.eixo.pecasestoque.model.PecaEstoque;
 import com.example.eixo.usuarios.model.Usuario;
+import com.example.eixo.veiculo.model.Veiculo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -57,6 +57,15 @@ public class Oficina {
 
     @OneToMany(mappedBy = "oficina")
     @JsonIgnore
-    private List<Caixa> ListaCaixa = new ArrayList<>();
+    private List<Orcamento> listaOrcamentos = new ArrayList<>();
+
+    @OneToMany(mappedBy = "oficina")
+    @JsonIgnore
+    private List<PecaEstoque> listaPecasEstoque = new ArrayList<>();
+
+    @OneToMany(mappedBy = "oficina")
+    @JsonIgnore
+    private List<Veiculo> listaVeiculos = new ArrayList<>();
+
 }
 

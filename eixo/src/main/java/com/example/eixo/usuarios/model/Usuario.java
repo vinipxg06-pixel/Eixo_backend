@@ -40,6 +40,7 @@ public class Usuario {
     @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
     private UsuarioStatus usuarioStatus;
 

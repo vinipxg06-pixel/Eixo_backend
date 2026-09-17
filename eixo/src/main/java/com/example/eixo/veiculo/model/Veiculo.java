@@ -1,8 +1,19 @@
 package com.example.eixo.veiculo.model;
 
 import com.example.eixo.cliente.model.Cliente;
+import com.example.eixo.marcasmodelos.model.Marca;
+import com.example.eixo.marcasmodelos.model.Modelo;
+import com.example.eixo.oficina.model.Oficina;
+import com.example.eixo.usuarios.model.Usuario;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @Entity
@@ -10,25 +21,45 @@ import lombok.Data;
 public class Veiculo {
 
     @Id
+    @Column(name = "id_veiculo", nullable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long idVeiculo;
 
-    @Column(nullable = false, length = 50)
-    private String marca;
-
-    @Column(nullable = false, length = 50)
-    private String modelo;
-
-    @Column(nullable = false, length = 4)
-    private String ano;
-
-    @Column(nullable = false, unique = true, length = 8)
+    @Column(name = "placa", nullable = false, unique = true, length = 8)
     private String placa;
 
-    @Column(length = 30)
-    private String cor;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "combustivel", nullable = false)
+    private Combustivel combustivel;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "cor", length = 30)
+    private Cor cor;
+
+    @Column(name = "ano",nullable = false, length = 4)
+    private String ano;
+
+    @Column(name = "quilometragem", nullable = true)
+    private Long quilometragem;
+
+    @CreationTimestamp
+    @Column(name = "created_at", nullable = false, updatable = false)
+    private LocalDateTime createdAt;
+
+    @UpdateTimestamp
+    @Column(name = "updated_at", nullable = false)
+    private LocalDateTime updatedAt;
+
+    @ManyToOne
+    @JoinColumn(name = "oficinas_id_oficina", nullable = false)
+    private Oficina oficina;
+
+    @ManyToOne
+    @JoinColumn(name = "modelos_veiculo_id_modelo",nullable = false)
+    private Modelo modelo;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "cliente_id", nullable = false)
+    @JoinColumn(name = "clientes_id_cliente", nullable = false)
     private Cliente cliente;
+
 }
