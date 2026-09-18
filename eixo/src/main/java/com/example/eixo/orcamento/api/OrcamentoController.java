@@ -42,8 +42,8 @@ public class OrcamentoController {
         return ResponseEntity.ok().body(orcamentoService.atualizarOrcamento(orcamentoUpdateRequest, orcamentoId));
     }
 
-    @PatchMapping("/{id}/alterarStatus")
-    public ResponseEntity<OrcamentoResponse> alterarStatus(@Valid @RequestBody OrcamentoStatusRequest orcamentoStatusRequest, Long orcamentoId){
+    @PatchMapping("/{orcamentoId}/alterarStatus")
+    public ResponseEntity<OrcamentoResponse> alterarStatus(@Valid @RequestBody OrcamentoStatusRequest orcamentoStatusRequest, @PathVariable Long orcamentoId){
         return ResponseEntity.ok().body(orcamentoService.alterarStatus(orcamentoId, orcamentoStatusRequest));
     }
 

@@ -1,10 +1,10 @@
 package com.example.eixo.orcamento.api.request;
 
 import com.example.eixo.orcamento.model.StatusOrcamento;
-import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
 public record OrcamentoStatusRequest(
-        @NotBlank
+        @NotNull
         StatusOrcamento statusOrcamento
 ) {
 }
