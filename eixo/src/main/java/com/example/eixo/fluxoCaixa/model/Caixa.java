@@ -6,15 +6,17 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
-
+import jakarta.persistence.*;
 import java.math.BigDecimal;
 import java.security.PrivateKey;
 import java.time.LocalDateTime;
+
 
 @Entity
 @Table(name = "movimentacao_fc")
 @Data
 @NoArgsConstructor
+
 public class Caixa {
 
     @Column(name = "id_fluxo_caixa")

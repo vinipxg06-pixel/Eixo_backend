@@ -18,20 +18,17 @@ public class CaixaMapper {
 
     public CaixaResponse toResponse(Caixa caixa) {
         return new CaixaResponse(
-                caixa.getidluxoCaixa(),
-                caixa.getdescricao(),
-                caixa.gettipo(),
-                caixa.getvalor(),
-                caixa.getcategoria(),
-                caixa.getdataMovimentacao(),
-                caixa.getosVinculada(),
-                caixa.getpecaEstoque(),
-                caixa.getOficina
-
-    }
+                caixa.getIdFluxoCaixa(),
+                caixa.getDescricao(),
+                caixa.getTipo(),
+                caixa.getValor(),
+                caixa.getCategoria(),
+                caixa.getDataMovimentacao(),
+                caixa.getOsVinculada(),
+                caixa.getPecaEstoque(),
+                caixa.getOficina()
 
         );
+    }
 }
-
-
 
