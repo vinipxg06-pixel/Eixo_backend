@@ -5,16 +5,11 @@ import jakarta.validation.constraints.NotBlank;
 import java.math.BigDecimal;
 
 public record OcPecasResponse(
-    @NotBlank
+        @NotBlank
     Long idOcPecas,
-    @NotBlank
+        @NotBlank
     BigDecimal valor,
-    @NotBlank
-    Integer quantidade
+        BigDecimal quantidade
 
 ) {
-    public OcPecasResponse{
-
-    }
-
 }

@@ -85,7 +85,7 @@ public class UsuarioService {
     }
 
     public UsuarioResponse findById(Long id){
-        Usuario usuarioEncontrado = usuarioRepository.findById(id).get();
+        Usuario usuarioEncontrado = encontrePeloId(id);
         return usuarioMapper.toResponse(usuarioEncontrado);
     }
 

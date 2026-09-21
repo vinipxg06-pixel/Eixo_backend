@@ -16,6 +16,7 @@ public record ClienteUpdateRequest(
         String telefone,
 
         @Email
+        @NotBlank
         String email
 ) {
 }

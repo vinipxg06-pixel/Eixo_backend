@@ -1,5 +1,6 @@
 package com.example.eixo.ocPecas.model;
 
+import com.example.eixo.orcamento.model.Orcamento;
 import com.example.eixo.pecasestoque.model.PecaEstoque;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -24,14 +25,14 @@ public class OcPecas {
     private BigDecimal valor;
 
     @Column(name = "quantidade", nullable = false)
-    private Integer quantidade;
+    private BigDecimal quantidade;
 
     @ManyToOne
     @JoinColumn(name = "pecas_estoque_id_estoque")
     private PecaEstoque pecaEstoque;
-    /*
+
     @ManyToOne
     @JoinColumn(name = "orcamentos_id_orcamento")
-    private Orcamentos orcamento;
-    */
+    private Orcamento orcamento;
+
 }

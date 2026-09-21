@@ -16,6 +16,10 @@ public class OcPecasMapper {
     }
 
     public OcPecasResponse ocPecasToResponse(OcPecas ocPecas){
-        return new OcPecasResponse(ocPecas.getIdOcPecas(),ocPecas.getValor(),ocPecas.getQuantidade());
+        return new OcPecasResponse(
+                ocPecas.getIdOcPecas(),
+                ocPecas.getValor(),
+                ocPecas.getQuantidade()
+        );
     }
 }

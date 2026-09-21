@@ -27,7 +27,7 @@ public class Orcamento {
     @Column(name = "status", nullable = false)
     private StatusOrcamento status;
 
-    @Column(name = "mao_obra", nullable = false)
+    @Column(name = "mao_obra", nullable = true)
     private BigDecimal maoDeObra;
 
     @Column(name = "descricao")

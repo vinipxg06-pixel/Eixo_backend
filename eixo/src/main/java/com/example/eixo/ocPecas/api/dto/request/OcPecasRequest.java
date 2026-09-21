@@ -1,24 +1,18 @@
 package com.example.eixo.ocPecas.api.dto.request;
 
 import jakarta.validation.constraints.Digits;
-import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
 import java.math.BigDecimal;
 
 public record OcPecasRequest(
-        @NotBlank
+        @NotNull
         @Digits(integer = 10, fraction = 2)
         BigDecimal valor,
-        @NotBlank
-        Integer quantidade
+        @NotNull
+        BigDecimal quantidade
 
-
-
-        //terminar request e fazer service
 ) {
-    public OcPecasRequest{
 
-
-    }
 
 }
