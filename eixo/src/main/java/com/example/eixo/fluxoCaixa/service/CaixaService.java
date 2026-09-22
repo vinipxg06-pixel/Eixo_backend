@@ -5,8 +5,6 @@ import com.example.eixo.fluxoCaixa.api.dto.CaixaRequest;
 import com.example.eixo.fluxoCaixa.model.Caixa;
 import com.example.eixo.fluxoCaixa.repository.CaixaRepository;
 import com.example.eixo.fluxoCaixa.mapper.CaixaMapper;
-import com.example.eixo.oficina.api.response.OficinaResponse;
-import com.example.eixo.oficina.model.Oficina;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import com.example.eixo.fluxoCaixa.api.dto.CaixaResponse;
@@ -23,59 +21,45 @@ public class CaixaService {
     private final CaixaMapper caixaMapper;
 
 
-    public Caixa
-
-    findById(Long id) {
-        return caixaRepository.findById(id)
-                .orElseThrow(() -> new RecursoNaoEncontrado("Caixa com id: " + id + " não encontrada"));
-
+    public Caixa findById(Long caixaId) {
+        return caixaRepository.findById(caixaId)
+                .orElseThrow(() -> new RecursoNaoEncontrado("Caixa com id: " + caixaId + " não encontrada"));
     }
 
-    public CaixaResponse
-
-    encontrarfluxoCaixapeloId(Long id) {
-        Caixa caixaEncontrada = findById(id);
-        CaixaResponse caixaResponse = caixaMapper.toResponse(caixaEncontrada);
-        return caixaResponse;
-
+    public CaixaResponse encontrarfluxoCaixapeloId(Long caixaId) {
+        Caixa caixaEncontrada = findById(caixaId);
+        return caixaMapper.toResponse(caixaEncontrada);
     }
 
-    public List
-
-            <CaixaResponse> ListarCaixa() {
-        List<Caixa> caixas = caixaRepository.findAll();
+    public List<CaixaResponse> listarCaixa(Long oficinaId) {
+        List<Caixa> caixas = caixaRepository.findAllyOficina_oficinaId(oficinaId);
         List<CaixaResponse> caixaResponse = new ArrayList<>();
-
         for (Caixa caixa1 : caixas) {
             CaixaResponse caixasListadas = caixaMapper.toResponse(caixa1);
             caixaResponse.add(caixasListadas);
         }
         return caixaResponse;
-
     }
 
-    public void deletarCaixa(Long id) {
-        Caixa caixaDeletar = findById(id);
+    public void deletarCaixa(Long caixaId) {
+        Caixa caixaDeletar = findById(caixaId);
         caixaRepository.delete(caixaDeletar);
-
     }
 
-
-    public CaixaResponse atualizarCaixa(CaixaRequest caixaRequest, Long id) {
-        Caixa atualizar = findById(id);
+    public CaixaResponse atualizarCaixa(CaixaRequest caixaRequest, Long caixaId) {
+        Caixa atualizar = findById(caixaId);
         atualizar.setDescricao(caixaRequest.descricao());
         atualizar.setTipo(caixaRequest.tipo());
         atualizar.setValor(caixaRequest.valor());
         atualizar.setCategoria(caixaRequest.categoria());
         caixaRepository.save(atualizar);
-
         return caixaMapper.toResponse(atualizar);
     }
 
-    public CaixaResponse salvarCaixa(CaixaRequest caixarequest) {
-        Caixa caixasalvar = caixaMapper.TransformeEmEntidade(caixarequest);
-        caixaRepository.save(caixasalvar);
-        return caixaMapper.toResponse(caixasalvar);
+    public CaixaResponse salvarCaixa(CaixaRequest caixaRequest) {
+        Caixa caixaSalvar = caixaMapper.transformeEmEntidade(caixaRequest);
+        caixaRepository.save(caixaSalvar);
+        return caixaMapper.toResponse(caixaSalvar);
     }
 
 }

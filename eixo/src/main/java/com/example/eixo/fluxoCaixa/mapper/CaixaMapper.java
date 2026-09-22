@@ -7,7 +7,7 @@ import com.example.eixo.fluxoCaixa.api.dto.CaixaResponse;
 
 public class CaixaMapper {
 
-    public Caixa TransformeEmEntidade(CaixaRequest caixaRequest) {
+    public Caixa transformeEmEntidade(CaixaRequest caixaRequest) {
         Caixa caixa = new Caixa();
         caixa.setDescricao(caixaRequest.descricao());
         caixa.setTipo(caixaRequest.tipo());

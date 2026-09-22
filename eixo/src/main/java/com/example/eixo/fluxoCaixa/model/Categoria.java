@@ -12,7 +12,6 @@ public enum Categoria
     Imposto,
     Fornecedor,
     Marketing,
-    Outros,
-
+    Outros
 }
 

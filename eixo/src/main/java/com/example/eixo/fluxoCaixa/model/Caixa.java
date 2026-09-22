@@ -7,10 +7,10 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import jakarta.persistence.*;
+
 import java.math.BigDecimal;
 import java.security.PrivateKey;
 import java.time.LocalDateTime;
-
 
 @Entity
 @Table(name = "movimentacao_fc")
@@ -27,29 +27,28 @@ public class Caixa {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "tipo")
-     private Tipo tipo;
+    private Tipo tipo;
 
-    @Column (name = "valor")
+    @Column(name = "valor")
     private BigDecimal valor;
 
     @Enumerated(EnumType.STRING)
-    @Column  (name="categoria")
+    @Column(name = "categoria")
     private Categoria categoria;
 
     @CreationTimestamp
-    @Column (name= "data_movimentacao")
+    @Column(name = "data_movimentacao")
     private LocalDateTime dataMovimentacao;
 
-    @Column (name= "os_vinculada")
+    @Column(name = "os_vinculada")
     private Integer osVinculada;
 
     @ManyToOne
-    @JoinColumn (name="oficina_id_oficina")
+    @JoinColumn(name = "oficina_id_oficina")
     private Oficina oficina;
 
     @ManyToOne
-    @JoinColumn (name ="pecas_estoque_id_estoque")
+    @JoinColumn(name = "pecas_estoque_id_estoque")
     private PecaEstoque pecaEstoque;
-
 
 }
