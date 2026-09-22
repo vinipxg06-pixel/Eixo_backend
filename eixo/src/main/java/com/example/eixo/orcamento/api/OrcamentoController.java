@@ -4,7 +4,6 @@ import com.example.eixo.orcamento.api.request.OrcamentoRequest;
 import com.example.eixo.orcamento.api.request.OrcamentoStatusRequest;
 import com.example.eixo.orcamento.api.request.OrcamentoUpdateRequest;
 import com.example.eixo.orcamento.api.response.OrcamentoResponse;
-import com.example.eixo.orcamento.model.StatusOrcamento;
 import com.example.eixo.orcamento.service.OrcamentoService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;

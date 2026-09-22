@@ -36,6 +36,12 @@ public class OrcamentoService {
                 .orElseThrow(() -> new RecursoNaoEncontrado("orcamento de id: " + orcamentoId + " não encontrado"));
     }
 
+    public OrcamentoResponse encontrarOrcamentoPeloId(Long orcamentoId){
+        Orcamento orcamento = orcamentoRepository.findById(orcamentoId)
+                .orElseThrow(() -> new RecursoNaoEncontrado("orcamento de id: " + orcamentoId + " não encontrado"));
+        return orcamentoMapper.transformarEmResposta(orcamento);
+    }
+
     public List<OrcamentoResponse> listaOrcamentos(Long oficinaId){
         List<Orcamento> listaOrcamentos = orcamentoRepository.findAllByOficina_oficinaId(oficinaId);
         List<OrcamentoResponse> listaOrcamentosResponse = new ArrayList<>();

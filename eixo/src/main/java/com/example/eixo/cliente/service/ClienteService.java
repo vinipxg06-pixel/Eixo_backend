@@ -9,7 +9,6 @@ import com.example.eixo.cliente.model.Status;
 import com.example.eixo.cliente.repository.ClienteRepository;
 import com.example.eixo.excecao.excecoespersonalizadas.RecursoNaoEncontrado;
 import com.example.eixo.oficina.model.Oficina;
-import com.example.eixo.oficina.repository.OficinaRepository;
 import com.example.eixo.oficina.service.OficinaService;
 import org.springframework.stereotype.Service;
 
