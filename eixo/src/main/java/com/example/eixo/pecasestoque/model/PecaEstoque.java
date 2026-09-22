@@ -1,6 +1,9 @@
 package com.example.eixo.pecasestoque.model;
 
+import com.example.eixo.fluxoCaixa.model.Caixa;
 import com.example.eixo.oficina.model.Oficina;
+import com.example.eixo.veiculo.model.Veiculo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -9,6 +12,8 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "pecas_estoque")
@@ -55,4 +60,10 @@ public class PecaEstoque {
     @ManyToOne
     @JoinColumn(name = "oficinas_id_oficina", nullable = false)
     private Oficina oficina;
+
+    @OneToMany(mappedBy = "pecaEstoque")
+    @JsonIgnore
+    private List<Caixa> listaCaixa = new ArrayList<>();
+
+
 }
