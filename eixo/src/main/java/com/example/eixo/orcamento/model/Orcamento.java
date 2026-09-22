@@ -1,6 +1,8 @@
 package com.example.eixo.orcamento.model;
 
+import com.example.eixo.ordemservico.model.OrdemServico;
 import com.example.eixo.veiculo.model.Veiculo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -11,6 +13,8 @@ import com.example.eixo.cliente.model.Cliente;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @NoArgsConstructor
 @Table(name = "orcamentos")
@@ -56,5 +60,7 @@ public class Orcamento {
     @JoinColumn(name = "veiculos_id_veiculo", nullable = false)
     private Veiculo veiculo;
 
-
+    @OneToMany(mappedBy = "orcamento")
+    @JsonIgnore
+    private List<OrdemServico> listaOrdensServico = new ArrayList<>();
 }

@@ -4,6 +4,7 @@ import com.example.eixo.cliente.model.Cliente;
 import com.example.eixo.marcasmodelos.model.Marca;
 import com.example.eixo.marcasmodelos.model.Modelo;
 import com.example.eixo.oficina.model.Oficina;
+import com.example.eixo.ordemservico.model.OrdemServico;
 import com.example.eixo.usuarios.model.Usuario;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
@@ -62,4 +63,7 @@ public class Veiculo {
     @JoinColumn(name = "clientes_id_cliente", nullable = false)
     private Cliente cliente;
 
+    @OneToMany(mappedBy = "veiculo")
+    @JsonIgnore
+    private List<OrdemServico> listaOrdensServico = new ArrayList<>();
 }
