@@ -2,6 +2,7 @@ package com.example.eixo.pecasestoque.model;
 
 import com.example.eixo.ocpecas.model.OcPecas;
 import com.example.eixo.oficina.model.Oficina;
+import com.example.eixo.ospecas.model.OsPecas;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -62,4 +63,8 @@ public class PecaEstoque {
     @OneToMany(mappedBy = "pecaEstoque")
     @JsonIgnore
     private List<OcPecas> listaOcPecas;
+
+    @OneToMany(mappedBy = "pecaEstoque")
+    @JsonIgnore
+    private List<OsPecas> listaOsPecas;
 }

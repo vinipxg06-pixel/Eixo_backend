@@ -1,4 +1,4 @@
-package com.example.eixo.orcamento.api.request;
+package com.example.eixo.ordemservico.api.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.PositiveOrZero;
@@ -6,7 +6,7 @@ import jakarta.validation.constraints.Size;
 
 import java.math.BigDecimal;
 
-public record OrcamentoUpdateRequest(
+public record OrdemServicoRequest(
 
         @PositiveOrZero
         BigDecimal maoDeObra,

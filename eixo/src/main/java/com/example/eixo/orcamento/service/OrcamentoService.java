@@ -20,6 +20,9 @@ import com.example.eixo.orcamento.repository.OrcamentoRepository;
 import com.example.eixo.pecasestoque.model.PecaEstoque;
 import com.example.eixo.veiculo.model.Veiculo;
 import com.example.eixo.veiculo.service.VeiculoService;
+import com.example.eixo.ordemservico.model.OrdemServico;
+import com.example.eixo.ordemservico.service.OrdemServicoService;
+import com.example.eixo.ospecas.service.OsPecasService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -39,6 +42,8 @@ public class OrcamentoService {
     private final OficinaService oficinaService;
     private final ClienteService clienteService;
     private final VeiculoService veiculoService;
+    private final OrdemServicoService ordemServicoService;
+    private final OsPecasService osPecasService;
 
     @Transactional(readOnly = true)
     public Orcamento findById(Long orcamentoId, Long oficinaId) {
@@ -116,6 +121,23 @@ public class OrcamentoService {
         Orcamento orcamento = findById(orcamentoId, oficinaId);
         orcamento.garantirEditavel();
         orcamento.setStatus(StatusOrcamento.Recusado);
+        return orcamentoMapper.transformarEmResposta(orcamento);
+    }
+
+    @Transactional
+    public OrcamentoResponse aprovar(Long orcamentoId, Long oficinaId) {
+        Orcamento orcamento = findById(orcamentoId, oficinaId);
+        validarParaAprovacao(orcamento);
+
+        OrdemServico ordemServico = ordemServicoService.criarAPartirDoOrcamento(orcamento);
+        List<OcPecas> itens = ocPecasRepository.findAllByOrcamento_idOrcamento(orcamentoId);
+
+        for (OcPecas item : itens) {
+            osPecasService.adicionarPecaDoOrcamento(ordemServico, item, oficinaId);
+        }
+
+        ordemServicoService.recalcularTotal(ordemServico);
+        orcamento.setStatus(StatusOrcamento.Aprovado);
         return orcamentoMapper.transformarEmResposta(orcamento);
     }
 

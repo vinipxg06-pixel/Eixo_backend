@@ -29,19 +29,18 @@ public class OrcamentoController {
     }
 
     @PostMapping("/cliente/{clienteId}/veiculo/{veiculoId}")
-    public ResponseEntity<OrcamentoResponse> criar(@Valid @RequestBody OrcamentoRequest request,
-                                                   @PathVariable Long oficinaId,
-                                                   @PathVariable Long clienteId,
-                                                   @PathVariable Long veiculoId) {
+    public ResponseEntity<OrcamentoResponse> criar(@Valid @RequestBody OrcamentoRequest request, @PathVariable Long oficinaId, @PathVariable Long clienteId, @PathVariable Long veiculoId) {
         return ResponseEntity.status(201).body(orcamentoService.salvarOrcamento(request, oficinaId, clienteId, veiculoId));
     }
 
     @PutMapping("/{orcamentoId}")
-    public ResponseEntity<OrcamentoResponse> atualizar(
-            @Valid @RequestBody OrcamentoUpdateRequest request,
-            @PathVariable Long oficinaId,
-            @PathVariable Long orcamentoId) {
+    public ResponseEntity<OrcamentoResponse> atualizar(@Valid @RequestBody OrcamentoUpdateRequest request, @PathVariable Long oficinaId, @PathVariable Long orcamentoId) {
         return ResponseEntity.ok(orcamentoService.atualizarOrcamento(request, orcamentoId, oficinaId));
+    }
+
+    @PostMapping("/{orcamentoId}/aprovar")
+    public ResponseEntity<OrcamentoResponse> aprovar(@PathVariable Long oficinaId, @PathVariable Long orcamentoId) {
+        return ResponseEntity.ok(orcamentoService.aprovar(orcamentoId, oficinaId));
     }
 
     @PostMapping("/{orcamentoId}/recusar")
