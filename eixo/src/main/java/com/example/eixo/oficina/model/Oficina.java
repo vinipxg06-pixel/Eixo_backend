@@ -1,6 +1,7 @@
 package com.example.eixo.oficina.model;
 
 import com.example.eixo.cliente.model.Cliente;
+import com.example.eixo.fluxoCaixa.model.Caixa;
 import com.example.eixo.orcamento.model.Orcamento;
 import com.example.eixo.ordemservico.model.OrdemServico;
 import com.example.eixo.pecasestoque.model.PecaEstoque;
@@ -72,5 +73,7 @@ public class Oficina {
     @JsonIgnore
     private List<OrdemServico> listaOrdensServicos = new ArrayList<>();
 
+    @OneToMany(mappedBy = "oficina")
+    @JsonIgnore
+    private List<Caixa> listaCaixa = new ArrayList<>();
 }
-

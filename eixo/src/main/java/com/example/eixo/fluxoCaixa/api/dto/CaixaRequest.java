@@ -9,7 +9,7 @@ import java.math.BigDecimal;
 public record CaixaRequest(
 
     @NotBlank
-    String  descricao,
+    String descricao,
 
     @NotBlank
     Tipo tipo,
@@ -20,8 +20,5 @@ public record CaixaRequest(
     @NotBlank
     Categoria categoria
 
-
-
 ){
-
 }

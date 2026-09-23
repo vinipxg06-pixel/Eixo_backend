@@ -3,8 +3,9 @@ package com.example.eixo.fluxoCaixa.mapper;
 import com.example.eixo.fluxoCaixa.api.dto.CaixaRequest;
 import com.example.eixo.fluxoCaixa.model.Caixa;
 import com.example.eixo.fluxoCaixa.api.dto.CaixaResponse;
+import org.springframework.stereotype.Component;
 
-
+@Component
 public class CaixaMapper {
 
     public Caixa transformeEmEntidade(CaixaRequest caixaRequest) {

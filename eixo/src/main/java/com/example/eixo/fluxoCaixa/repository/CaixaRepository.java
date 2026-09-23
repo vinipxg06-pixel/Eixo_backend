@@ -6,5 +6,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface CaixaRepository extends JpaRepository <Caixa,Long>{
-    List<Caixa> findAllyOficina_oficinaId(Long oficinaId);
+    List<Caixa> findAllByOficina_oficinaId(Long oficinaId);
 }

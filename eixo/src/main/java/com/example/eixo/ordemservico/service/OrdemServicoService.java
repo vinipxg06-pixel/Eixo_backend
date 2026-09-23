@@ -18,6 +18,7 @@ import com.example.eixo.ordemservico.model.StatusOS;
 import com.example.eixo.ordemservico.repository.OrdemServicoRespository;
 import com.example.eixo.veiculo.model.Veiculo;
 import com.example.eixo.veiculo.service.VeiculoService;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import javax.swing.*;
@@ -25,14 +26,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
+@AllArgsConstructor
 public class OrdemServicoService {
 
-    OrdemServicoRespository ordemServicoRespository;
-    OrdemServicoMapper ordemServicoMapper;
-    OficinaService oficinaService;
-    ClienteService clienteService;
-    VeiculoService veiculoService;
-    OrcamentoService orcamentoService;
+    private final OrdemServicoRespository ordemServicoRespository;
+    private final OrdemServicoMapper ordemServicoMapper;
+    private final OficinaService oficinaService;
+    private final ClienteService clienteService;
+    private final VeiculoService veiculoService;
+    private final OrcamentoService orcamentoService;
 
     public OrdemServicoResponse encontrarPeloId(Long ordemServicoId){
         OrdemServico ordemServico = ordemServicoRespository.findById(ordemServicoId).orElseThrow(() -> new RecursoNaoEncontrado("Ordem de Serviço de id: " + ordemServicoId + " não encontrado"));
@@ -40,7 +42,7 @@ public class OrdemServicoService {
     }
 
     public List<OrdemServicoResponse> listarOrdensServico(Long oficinaId){
-        List<OrdemServico> listaOrdensServico = ordemServicoRespository.findAllByOrdemServico_oficinaId(oficinaId);
+        List<OrdemServico> listaOrdensServico = ordemServicoRespository.findAllByOficina_oficinaId(oficinaId);
         List<OrdemServicoResponse> listaOsEncontrada = new ArrayList<>();
 
         for (OrdemServico lisOrdemServico1 : listaOrdensServico){

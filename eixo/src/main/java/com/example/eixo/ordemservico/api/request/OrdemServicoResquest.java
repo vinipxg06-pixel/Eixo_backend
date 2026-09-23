@@ -1,7 +1,9 @@
 package com.example.eixo.ordemservico.api.request;
 
+import java.math.BigDecimal;
+
 public record OrdemServicoResquest(
-        Double valorTotal,
-        Double maoObra
+        BigDecimal valorTotal,
+        BigDecimal maoObra
 ) {
 }

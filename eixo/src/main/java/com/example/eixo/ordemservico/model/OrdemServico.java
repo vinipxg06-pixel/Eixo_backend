@@ -10,8 +10,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
-
-import java.time.LocalDateTime;
+import java.math.BigDecimal;
+import java.time.LocalDate;
 
 @NoArgsConstructor
 @Table(name = "ordens_servicos")
@@ -24,22 +24,23 @@ public class OrdemServico {
     @Column(name = "id_ordem_servico", nullable = false)
     private Long ordemServicoId;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
     private StatusOS status;
 
     @Column(name = "valor_total")
-    private double valorTotal;
+    private BigDecimal valorTotal;
 
     @Column(name = "data_abertura", nullable = false)
     @CreationTimestamp
-    private LocalDateTime dataAbertura;
+    private LocalDate dataAbertura;
 
     @Column(name = "data_fechamento")
     @UpdateTimestamp
-    private LocalDateTime dataFechamento;
+    private LocalDate dataFechamento;
 
     @Column(name = "mao_obra", nullable = false)
-    private Double maoObra;
+    private BigDecimal maoObra;
 
     @ManyToOne
     @JoinColumn(name = "oficinas_id_oficina", nullable = false)

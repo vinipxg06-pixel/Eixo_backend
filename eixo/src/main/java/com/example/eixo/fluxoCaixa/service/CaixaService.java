@@ -32,7 +32,7 @@ public class CaixaService {
     }
 
     public List<CaixaResponse> listarCaixa(Long oficinaId) {
-        List<Caixa> caixas = caixaRepository.findAllyOficina_oficinaId(oficinaId);
+        List<Caixa> caixas = caixaRepository.findAllByOficina_oficinaId(oficinaId);
         List<CaixaResponse> caixaResponse = new ArrayList<>();
         for (Caixa caixa1 : caixas) {
             CaixaResponse caixasListadas = caixaMapper.toResponse(caixa1);

@@ -6,5 +6,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface OrdemServicoRespository extends JpaRepository<OrdemServico, Long> {
-    List<OrdemServico> findAllByOrdemServico_oficinaId(Long oficinaId);
+    List<OrdemServico> findAllByOficina_oficinaId(Long oficinaId);
 }
