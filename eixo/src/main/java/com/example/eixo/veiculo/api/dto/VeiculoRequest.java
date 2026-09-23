@@ -2,9 +2,7 @@ package com.example.eixo.veiculo.api.dto;
 
 import com.example.eixo.veiculo.model.Combustivel;
 import com.example.eixo.veiculo.model.Cor;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 
 public record VeiculoRequest(
 
@@ -18,10 +16,11 @@ public record VeiculoRequest(
         Cor cor,
 
         @NotBlank(message = "Ano é obrigatório")
-        @Size(min = 4, max = 4, message = "Ano deve ter 4 dígitos")
+        @Pattern(regexp = "\\d{4}", message = "Ano deve conter 4 dígitos")
         String ano,
 
         @NotNull
+        @PositiveOrZero
         Long quilometragem
 ) {
 }

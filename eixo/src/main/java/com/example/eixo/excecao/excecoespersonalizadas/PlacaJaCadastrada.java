@@ -1,4 +1,4 @@
-package com.example.eixo.veiculo.exception;
+package com.example.eixo.excecao.excecoespersonalizadas;
 
 public class PlacaJaCadastrada extends RuntimeException {
     public PlacaJaCadastrada(String message) {

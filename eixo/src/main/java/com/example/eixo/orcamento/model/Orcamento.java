@@ -1,5 +1,6 @@
 package com.example.eixo.orcamento.model;
 
+import com.example.eixo.excecao.excecoespersonalizadas.TransicaoInvalida;
 import com.example.eixo.veiculo.model.Veiculo;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -27,10 +28,10 @@ public class Orcamento {
     @Column(name = "status", nullable = false)
     private StatusOrcamento status;
 
-    @Column(name = "mao_obra", nullable = false)
+    @Column(name = "mao_obra", nullable = true)
     private BigDecimal maoDeObra;
 
-    @Column(name = "descricao")
+    @Column(name = "descricao", nullable = false)
     private String descricao;
 
     @Column(name = "valor_total")
@@ -56,5 +57,19 @@ public class Orcamento {
     @JoinColumn(name = "veiculos_id_veiculo", nullable = false)
     private Veiculo veiculo;
 
+    public boolean isEditavel() {
+        return status == StatusOrcamento.Pendente;
+    }
 
+    public void garantirEditavel() {
+        if (!isEditavel()) {
+            throw new TransicaoInvalida(
+                    "Orçamento " + idOrcamento + " está " + status
+                            + " e não pode mais ser alterado");
+        }
+    }
+
+    public BigDecimal maoDeObraOuZero() {
+        return maoDeObra == null ? BigDecimal.ZERO : maoDeObra;
+    }
 }

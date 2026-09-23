@@ -25,7 +25,7 @@ public class Veiculo {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idVeiculo;
 
-    @Column(name = "placa", nullable = false, unique = true, length = 8)
+    @Column(name = "placa", nullable = false, unique = true, length = 7)
     private String placa;
 
     @Enumerated(EnumType.STRING)
@@ -58,7 +58,7 @@ public class Veiculo {
     @JoinColumn(name = "modelos_veiculo_id_modelo",nullable = false)
     private Modelo modelo;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "clientes_id_cliente", nullable = false)
     private Cliente cliente;
 

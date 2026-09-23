@@ -13,6 +13,7 @@ public record ClienteRequest(
         String telefone,
 
         @Email
+        @NotBlank
         String email
 ) {
 }

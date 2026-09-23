@@ -1,12 +1,17 @@
 package com.example.eixo.veiculo.mapper;
 
+import com.example.eixo.marcasmodelos.mapper.ModeloMapper;
 import com.example.eixo.veiculo.api.dto.VeiculoRequest;
 import com.example.eixo.veiculo.api.dto.VeiculoResponse;
 import com.example.eixo.veiculo.model.Veiculo;
-import org.springframework.stereotype.Service;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
 
-@Service
+@Component
+@RequiredArgsConstructor
 public class VeiculoMapper {
+
+    private final ModeloMapper modeloMapper;
 
     public Veiculo toEntity(VeiculoRequest veiculoRequest){
         Veiculo veiculo = new Veiculo();
@@ -19,7 +24,7 @@ public class VeiculoMapper {
         return veiculo;
     }
 
-    public VeiculoResponse toResponse(Veiculo veiculo){
+    public VeiculoResponse toResponse(Veiculo veiculo) {
         return new VeiculoResponse(
                 veiculo.getIdVeiculo(),
                 veiculo.getPlaca(),
@@ -28,7 +33,7 @@ public class VeiculoMapper {
                 veiculo.getAno(),
                 veiculo.getQuilometragem(),
                 veiculo.getOficina().getOficinaId(),
-                veiculo.getModelo(),
+                modeloMapper.toResponse(veiculo.getModelo()),
                 veiculo.getCliente().getNomeCliente()
         );
     }

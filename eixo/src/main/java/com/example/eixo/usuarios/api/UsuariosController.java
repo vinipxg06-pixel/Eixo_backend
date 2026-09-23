@@ -1,13 +1,10 @@
-package com.example.eixo.usuarios.api
-;
+package com.example.eixo.usuarios.api;
 
 import com.example.eixo.usuarios.api.dto.*;
-import com.example.eixo.usuarios.model.Usuario;
 import com.example.eixo.usuarios.service.UsuarioService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -16,12 +13,8 @@ import java.util.List;
 @RequestMapping("/usuarios")
 @AllArgsConstructor
 public class UsuariosController {
-    private final UsuarioService usuarioService;
 
-    @GetMapping
-    public ResponseEntity<List<UsuarioResponse>> getAllUsuarios(){
-        return ResponseEntity.ok().body(usuarioService.findAllUsuarios());
-    }
+    private final UsuarioService usuarioService;
 
     @GetMapping("/{id}")
     public ResponseEntity<UsuarioResponse>getUsuarioById(@PathVariable Long id){
