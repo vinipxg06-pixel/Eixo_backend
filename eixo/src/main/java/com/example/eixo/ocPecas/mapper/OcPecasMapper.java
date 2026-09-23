@@ -1,25 +1,21 @@
-package com.example.eixo.ocPecas.mapper;
+package com.example.eixo.ocpecas.mapper;
 
-import com.example.eixo.ocPecas.api.dto.request.OcPecasRequest;
-import com.example.eixo.ocPecas.api.dto.response.OcPecasResponse;
-import com.example.eixo.ocPecas.model.OcPecas;
+import com.example.eixo.ocpecas.api.dto.response.OcPecasResponse;
+import com.example.eixo.ocpecas.model.OcPecas;
 import org.springframework.stereotype.Component;
 
 @Component
 public class OcPecasMapper {
 
-    public OcPecas toEntity(OcPecasRequest ocPecasRequest){
-        OcPecas ocPecas = new OcPecas();
-        ocPecas.setQuantidade(ocPecasRequest.quantidade());
-        ocPecas.setValor(ocPecasRequest.valor());
-        return ocPecas;
-    }
-
-    public OcPecasResponse ocPecasToResponse(OcPecas ocPecas){
+    public OcPecasResponse toResponse(OcPecas item) {
         return new OcPecasResponse(
-                ocPecas.getIdOcPecas(),
-                ocPecas.getValor(),
-                ocPecas.getQuantidade()
+                item.getIdOcPecas(),
+                item.getPecaEstoque().getEstoqueId(),
+                item.getPecaEstoque().getNomePeca(),
+                item.getValor(),
+                item.getQuantidade(),
+                item.getValor().multiply(item.getQuantidade())
         );
     }
+
 }

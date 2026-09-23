@@ -1,4 +1,4 @@
-package com.example.eixo.ocPecas.model;
+package com.example.eixo.ocpecas.model;
 
 import com.example.eixo.orcamento.model.Orcamento;
 import com.example.eixo.pecasestoque.model.PecaEstoque;
@@ -30,6 +30,7 @@ public class OcPecas {
     @ManyToOne
     @JoinColumn(name = "pecas_estoque_id_estoque")
     private PecaEstoque pecaEstoque;
+
 
     @ManyToOne
     @JoinColumn(name = "orcamentos_id_orcamento")

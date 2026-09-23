@@ -1,69 +1,101 @@
-package com.example.eixo.ocPecas.service;
+package com.example.eixo.ocpecas.service;
 
 import com.example.eixo.excecao.excecoespersonalizadas.RecursoNaoEncontrado;
-import com.example.eixo.ocPecas.api.dto.request.OcPecasRequest;
-import com.example.eixo.ocPecas.api.dto.response.OcPecasResponse;
-import com.example.eixo.ocPecas.mapper.OcPecasMapper;
-import com.example.eixo.ocPecas.model.OcPecas;
-import com.example.eixo.ocPecas.repository.OcPecasRepository;
+import com.example.eixo.ocpecas.api.dto.request.OcPecasRequest;
+import com.example.eixo.ocpecas.api.dto.response.OcPecasResponse;
+import com.example.eixo.ocpecas.mapper.OcPecasMapper;
+import com.example.eixo.ocpecas.model.OcPecas;
+import com.example.eixo.ocpecas.repository.OcPecasRepository;
 import com.example.eixo.orcamento.model.Orcamento;
 import com.example.eixo.orcamento.service.OrcamentoService;
 import com.example.eixo.pecasestoque.model.PecaEstoque;
 import com.example.eixo.pecasestoque.service.PecaEstoqueService;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
+import java.math.BigDecimal;
 import java.util.List;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class OcPecasService {
 
     private final OcPecasRepository ocPecasRepository;
-    private final OcPecasMapper mapperOcPecas;
+    private final OcPecasMapper ocPecasMapper;
     private final OrcamentoService orcamentoService;
     private final PecaEstoqueService pecaEstoqueService;
 
-    public OcPecas encontrarPeloId(Long idOcPecas){
-        return ocPecasRepository.findById(idOcPecas).orElseThrow(
-                () -> new RecursoNaoEncontrado("Peça de id: " + idOcPecas + " não encontrada"));
+    @Transactional(readOnly = true)
+    public List<OcPecasResponse> listarPorOrcamento(Long oficinaId, Long orcamentoId) {
+        orcamentoService.findById(orcamentoId, oficinaId);
+        return ocPecasRepository.findAllByOrcamento_idOrcamento(orcamentoId)
+                .stream()
+                .map(ocPecasMapper::toResponse)
+                .toList();
     }
 
-    public OcPecasResponse findById(Long idOcPecas){
-        return mapperOcPecas.ocPecasToResponse(encontrarPeloId(idOcPecas));
+    @Transactional
+    public OcPecasResponse adicionarPeca(Long oficinaId, Long orcamentoId, Long estoqueId, OcPecasRequest request) {
+        Orcamento orcamento = orcamentoService.findById(orcamentoId, oficinaId);
+        orcamento.garantirEditavel();
+
+        PecaEstoque peca = pecaEstoqueService.encontrarPecaPeloId(estoqueId, oficinaId);
+
+        OcPecas item = ocPecasRepository
+                .findByOrcamento_idOrcamentoAndPecaEstoque_estoqueId(orcamentoId, estoqueId)
+                .orElseGet(() -> {
+                    OcPecas novo = new OcPecas();
+                    novo.setOrcamento(orcamento);
+                    novo.setPecaEstoque(peca);
+                    novo.setQuantidade(BigDecimal.ZERO);
+                    return novo;
+                });
+
+        item.setQuantidade(item.getQuantidade().add(request.quantidade()));
+        item.setValor(peca.getPrecoUnitario());   // congela o preço vigente
+
+        OcPecas salvo = ocPecasRepository.save(item);
+        orcamentoService.recalcularTotal(orcamento);
+
+        return ocPecasMapper.toResponse(salvo);
     }
 
-    public OcPecasResponse saveOcPeca(OcPecasRequest ocPecasRequest, Long idOrcamento, Long estoqueId){
-        Orcamento orcamento = orcamentoService.findById(idOrcamento);
-        PecaEstoque pecaEstoque = pecaEstoqueService.encontrarPecaPeloId(estoqueId);
-        OcPecas ocPecas = mapperOcPecas.toEntity(ocPecasRequest);
-        ocPecas.setPecaEstoque(pecaEstoque);
-        ocPecas.setOrcamento(orcamento);
-        return mapperOcPecas.ocPecasToResponse(ocPecasRepository.save(ocPecas));
+
+    @Transactional
+    public OcPecasResponse alterarQuantidade(Long oficinaId, Long orcamentoId, Long idOcPeca, OcPecasRequest request) {
+        Orcamento orcamento = orcamentoService.findById(orcamentoId, oficinaId);
+        orcamento.garantirEditavel();
+
+        OcPecas item = buscarItemDoOrcamento(idOcPeca, orcamentoId);
+        item.setQuantidade(request.quantidade());
+
+        orcamentoService.recalcularTotal(orcamento);
+        return ocPecasMapper.toResponse(item);
     }
 
-    public List<OcPecasResponse> getOcPecasByOrcamento(Long idOrcamento){
-        List<OcPecas> ocPecasList = ocPecasRepository.findAllByOrcamento_idOrcamento(idOrcamento);
-        List<OcPecasResponse> ocPecasResponses = new ArrayList<>();
+    @Transactional
+    public void removerPeca(Long oficinaId, Long orcamentoId, Long idOcPeca) {
+        Orcamento orcamento = orcamentoService.findById(orcamentoId, oficinaId);
+        orcamento.garantirEditavel();
 
-        for(OcPecas ocPecas : ocPecasList){
-            OcPecasResponse ocPecasResponse = mapperOcPecas.ocPecasToResponse(ocPecas);
-            ocPecasResponses.add(ocPecasResponse);
+        OcPecas item = buscarItemDoOrcamento(idOcPeca, orcamentoId);
+        ocPecasRepository.delete(item);
+        ocPecasRepository.flush();
+
+        orcamentoService.recalcularTotal(orcamento);
+    }
+
+
+    private OcPecas buscarItemDoOrcamento(Long idOcPeca, Long orcamentoId) {
+        OcPecas item = ocPecasRepository.findById(idOcPeca)
+                .orElseThrow(() -> new RecursoNaoEncontrado(
+                        "Item de id: " + idOcPeca + " não encontrado"));
+
+        if (!item.getOrcamento().getIdOrcamento().equals(orcamentoId)) {
+            throw new RecursoNaoEncontrado(
+                    "Item " + idOcPeca + " não pertence ao orçamento " + orcamentoId);
         }
-        return ocPecasResponses;
+        return item;
     }
-
-    public OcPecasResponse putOcPecas(OcPecasRequest ocPecasRequest, Long idOcPecas, Long idOrcamento){
-        OcPecas ocPecas = encontrarPeloId(idOcPecas);
-        Orcamento orcamento = orcamentoService.findById(idOrcamento);
-        ocPecas.setQuantidade(ocPecasRequest.quantidade());
-        ocPecas.setValor(ocPecasRequest.valor());
-        return mapperOcPecas.ocPecasToResponse(ocPecasRepository.save(ocPecas));
-    }
-
-    public void deleteOcPecas(Long idOcPecas){
-        ocPecasRepository.deleteById(idOcPecas);
-    }
-
 }

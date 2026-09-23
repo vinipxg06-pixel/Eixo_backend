@@ -4,7 +4,7 @@ import com.example.eixo.excecao.excecoespersonalizadas.RecursoNaoEncontrado;
 import com.example.eixo.oficina.model.Oficina;
 import com.example.eixo.oficina.service.OficinaService;
 import com.example.eixo.usuarios.api.dto.*;
-import com.example.eixo.usuarios.exception.excecoesPersonalizadas.EmailJaCadastrado;
+import com.example.eixo.excecao.excecoespersonalizadas.EmailJaCadastrado;
 import com.example.eixo.usuarios.mapper.UsuarioMapper;
 import com.example.eixo.usuarios.model.UsuarioStatus;
 import com.example.eixo.usuarios.model.Usuario;
@@ -70,18 +70,14 @@ public class UsuarioService {
     }
 
     public UsuarioResponse updateUsuario(UsuarioUpdateRequest usuarioUpdateRequest, Long id){
-
         Usuario usuario = encontrePeloId(id);
 
         usuario.setEmail(usuarioUpdateRequest.email());
         usuario.setNomeUsuario(usuarioUpdateRequest.nomeUsuario());
         usuario.setSenha(usuarioUpdateRequest.senha());
         usuario.setUsuarioStatus(usuarioUpdateRequest.usuarioStatus());
-        usuario.setUpdatedAt(LocalDateTime.now());
-        Usuario usuarioAtualizado = usuarioRepository.save(usuario);
-        UsuarioResponse usuarioResponse = usuarioMapper.toResponse(usuario);
 
-        return usuarioResponse;
+        return usuarioMapper.toResponse(usuarioRepository.save(usuario));
     }
 
     public UsuarioResponse findById(Long id){
@@ -102,7 +98,7 @@ public class UsuarioService {
     }
 
     public void deleteUsuario(Long id){
-        Usuario usuario = usuarioRepository.findById(id).get();
+        Usuario usuario = encontrePeloId(id);
         usuarioRepository.delete(usuario);
     }
 

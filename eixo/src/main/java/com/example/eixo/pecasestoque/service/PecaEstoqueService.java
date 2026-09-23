@@ -1,5 +1,6 @@
 package com.example.eixo.pecasestoque.service;
 
+import com.example.eixo.excecao.excecoespersonalizadas.EstoqueInsuficiente;
 import com.example.eixo.excecao.excecoespersonalizadas.RecursoNaoEncontrado;
 import com.example.eixo.oficina.model.Oficina;
 import com.example.eixo.oficina.repository.OficinaRepository;
@@ -31,8 +32,8 @@ public class PecaEstoqueService {
         this.pecaEstoqueMapper = pecaEstoqueMapper;
     }
 
-    public PecaEstoque encontrarPecaPeloId(Long estoqueId){
-        return pecaEstoqueRepository.findById(estoqueId).orElseThrow(() -> new RecursoNaoEncontrado("Peça com id " + estoqueId + " não encontrada"));
+    public PecaEstoque encontrarPecaPeloId(Long estoqueId, Long oficinaId){
+        return pecaEstoqueRepository.findByEstoqueIdAndOficina_OficinaId(estoqueId, oficinaId).orElseThrow(() -> new RecursoNaoEncontrado("Peça com id " + estoqueId + " não encontrada"));
     }
 
     public List<PecaEstoqueResponse> findAllByOficina(Long oficinaId){
@@ -48,8 +49,7 @@ public class PecaEstoqueService {
     }
 
     public PecaEstoqueResponse findByIdAndOficinaId(Long estoqueId, Long oficinaId){
-        PecaEstoque pecaEstoque = pecaEstoqueRepository
-                .findByEstoqueIdAndOficina_OficinaId(estoqueId, oficinaId);
+        PecaEstoque pecaEstoque = encontrarPecaPeloId(estoqueId, oficinaId);
         return pecaEstoqueMapper.transformarEmResponse(pecaEstoque);
     }
 
@@ -63,7 +63,7 @@ public class PecaEstoqueService {
 
 
     public PecaEstoqueResponse updatePecaEstoque(PecaEstoqueRequest pecaEstoqueRequest, Long estoqueId, Long oficinaId) {
-        PecaEstoque pecaEstoque = encontrarPecaPeloId(estoqueId);
+        PecaEstoque pecaEstoque = encontrarPecaPeloId(estoqueId, oficinaId);
         Oficina oficina = oficinaService.findById(oficinaId);
 
         pecaEstoque.setNomePeca(pecaEstoqueRequest.nomePeca());
@@ -79,17 +79,15 @@ public class PecaEstoqueService {
     }
 
     public void deletarPecaEstoque(Long estoqueId,Long oficinaId){
-        PecaEstoque pecaEstoque = pecaEstoqueRepository.findByEstoqueIdAndOficina_OficinaId(estoqueId, oficinaId);
+        PecaEstoque pecaEstoque = encontrarPecaPeloId(estoqueId, oficinaId);
         pecaEstoqueRepository.delete(pecaEstoque);
     }
 
-    public PecaEstoqueResponse removerPecaEstoque(Long estoqueId, BigDecimal quantidade) {
-        PecaEstoque pecaEstoque = pecaEstoqueRepository.findById(estoqueId)
-                .orElseThrow(() -> new RecursoNaoEncontrado(
-                        "Peça com id: " + estoqueId + " não encontrada"));
+    public PecaEstoqueResponse removerPecaEstoque(Long estoqueId, BigDecimal quantidade, Long oficinaId) {
+        PecaEstoque pecaEstoque = encontrarPecaPeloId(estoqueId, oficinaId);
 
         if (pecaEstoque.getQuantidade().compareTo(quantidade) < 0) {
-            throw new IllegalArgumentException("Quantidade informada é maior que o estoque disponível");
+            throw new EstoqueInsuficiente("Quantidade informada é maior que o estoque disponível");
         }
         pecaEstoque.setQuantidade(pecaEstoque.getQuantidade().subtract(quantidade));
         PecaEstoque pecaSalva = pecaEstoqueRepository.save(pecaEstoque);
@@ -97,20 +95,44 @@ public class PecaEstoqueService {
         return pecaEstoqueMapper.transformarEmResponse(pecaSalva);
     }
 
-    public PecaEstoqueResponse adicionarEstoque(Long estoqueId, PecaEstoqueAdicionarRequest pecaEstoqueAdicionarRequest) {
-        PecaEstoque pecaEstoque = encontrarPecaPeloId(estoqueId);
+    public PecaEstoqueResponse adicionarEstoque(
+            Long estoqueId,
+            PecaEstoqueAdicionarRequest pecaEstoqueAdicionarRequest,
+            Long oficinaId
+    ) {
+        PecaEstoque pecaEstoque = encontrarPecaPeloId(estoqueId, oficinaId);
 
-        BigDecimal quantidadeAtual = pecaEstoque.getQuantidade();
-        BigDecimal precoAtual = pecaEstoque.getPrecoUnitario();
+        BigDecimal quantidadeAtual = pecaEstoque.getQuantidade() != null
+                ? pecaEstoque.getQuantidade()
+                : BigDecimal.ZERO;
+
+        BigDecimal precoAtual = pecaEstoque.getPrecoUnitario() != null
+                ? pecaEstoque.getPrecoUnitario()
+                : BigDecimal.ZERO;
+
+        BigDecimal quantidadeEntrada = pecaEstoqueAdicionarRequest.quantidadeEntrada() != null
+                ? pecaEstoqueAdicionarRequest.quantidadeEntrada()
+                : BigDecimal.ZERO;
+
+        BigDecimal precoUnitarioEntrada = pecaEstoqueAdicionarRequest.precoUnitarioEntrada() != null
+                ? pecaEstoqueAdicionarRequest.precoUnitarioEntrada()
+                : BigDecimal.ZERO;
 
         BigDecimal valorEstoqueAtual = quantidadeAtual.multiply(precoAtual);
 
-        BigDecimal valorEntrada = pecaEstoqueAdicionarRequest.quantidadeEntrada().multiply(pecaEstoqueAdicionarRequest.precoUnitarioEntrada());
+        BigDecimal valorEntrada = quantidadeEntrada.multiply(precoUnitarioEntrada);
 
-        BigDecimal novaQuantidade = quantidadeAtual.add(pecaEstoqueAdicionarRequest.quantidadeEntrada());
+        BigDecimal novaQuantidade = quantidadeAtual.add(quantidadeEntrada);
 
-        BigDecimal novoPrecoMedio = valorEstoqueAtual.add(valorEntrada)
-                        .divide(novaQuantidade, 2, RoundingMode.HALF_UP);
+        if (novaQuantidade.compareTo(BigDecimal.ZERO) == 0) {
+            throw new IllegalStateException(
+                    "Não é possível calcular o preço médio com quantidade total igual a zero."
+            );
+        }
+
+        BigDecimal novoPrecoMedio = valorEstoqueAtual
+                .add(valorEntrada)
+                .divide(novaQuantidade, 2, RoundingMode.HALF_UP);
 
         pecaEstoque.setQuantidade(novaQuantidade);
         pecaEstoque.setPrecoUnitario(novoPrecoMedio);

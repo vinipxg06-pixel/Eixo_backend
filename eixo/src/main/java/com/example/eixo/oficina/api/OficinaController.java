@@ -29,7 +29,7 @@ public class OficinaController {
 
     @PostMapping
     public ResponseEntity<OficinaResponse> salvar(@Valid @RequestBody OficinaRequest oficinaRequest) {
-        return ResponseEntity.ok().body(oficinaService.salvarOficina(oficinaRequest));
+        return ResponseEntity.status(201).body(oficinaService.salvarOficina(oficinaRequest));
     }
 
     @DeleteMapping("/{id}")

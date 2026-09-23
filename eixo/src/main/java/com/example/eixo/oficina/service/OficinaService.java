@@ -51,6 +51,7 @@ public class OficinaService {
         atualizar.setNomeOficina(oficinaRequest.nomeOficina());
         atualizar.setTelefone(oficinaRequest.telefone());
         atualizar.setEmail(oficinaRequest.email());
+        atualizar.setCnpj(oficinaRequest.cnpj());
         oficinaRepository.save(atualizar);
 
         return oficinaMapper.transformarEmResposta(atualizar);

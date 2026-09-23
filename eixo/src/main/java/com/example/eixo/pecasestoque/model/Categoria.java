@@ -3,11 +3,11 @@ package com.example.eixo.pecasestoque.model;
 public enum Categoria {
     Motor,
     Freios,
-    Suspensão,
-    Transmissão,
+    Suspensao,
+    Transmissao,
     Embreagem,
-    Elétrica,
-    Arrefacimento,
+    Eletrica,
+    Arrefecimento,
     Filtros,
     Lubrificante,
     Pneu,
@@ -15,6 +15,6 @@ public enum Categoria {
     Correia,
     Bateria,
     Carroceria,
-    Acessórios,
+    Acessorios,
     Outros
 }

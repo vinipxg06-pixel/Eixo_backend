@@ -1,5 +1,6 @@
 package com.example.eixo.veiculo.repository;
 
+import com.example.eixo.cliente.model.Cliente;
 import com.example.eixo.veiculo.model.Veiculo;
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -10,8 +11,11 @@ public interface VeiculoRepository extends JpaRepository<Veiculo, Long> {
 
     Optional<Veiculo> findByPlaca(String placa);
 
-    List<Veiculo> findByCliente_ClienteId(Long clienteId);
-
     List<Veiculo> findAllByOficina_OficinaId(Long oficinaId);
+
+    Optional<Veiculo> findByIdVeiculoAndOficina_OficinaId(Long idVeiculo, Long oficinaId);
+
+    List<Veiculo> findAllByCliente_ClienteIdAndOficina_OficinaId(Long clienteId, Long oficinaId);
+
 
 }

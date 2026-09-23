@@ -1,6 +1,6 @@
 package com.example.eixo.pecasestoque.model;
 
-import com.example.eixo.ocPecas.model.OcPecas;
+import com.example.eixo.ocpecas.model.OcPecas;
 import com.example.eixo.oficina.model.Oficina;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;

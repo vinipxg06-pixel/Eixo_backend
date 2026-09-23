@@ -1,22 +1,20 @@
+// orcamento/api/request/OrcamentoUpdateRequest.java
 package com.example.eixo.orcamento.api.request;
 
-import com.example.eixo.orcamento.model.StatusOrcamento;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.PositiveOrZero;
+import jakarta.validation.constraints.Size;
 
 import java.math.BigDecimal;
 
 public record OrcamentoUpdateRequest(
-        @NotNull
-        StatusOrcamento statusOrcamento,
 
+        @PositiveOrZero
         BigDecimal maoDeObra,
 
-        @NotNull
-        @Positive
-        BigDecimal valorTotal,
-
+        @NotBlank
+        @Size(max = 100)
         String descricao
+
 ) {
 }

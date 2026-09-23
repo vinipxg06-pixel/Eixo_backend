@@ -9,7 +9,6 @@ import com.example.eixo.cliente.model.Status;
 import com.example.eixo.cliente.repository.ClienteRepository;
 import com.example.eixo.excecao.excecoespersonalizadas.RecursoNaoEncontrado;
 import com.example.eixo.oficina.model.Oficina;
-import com.example.eixo.oficina.repository.OficinaRepository;
 import com.example.eixo.oficina.service.OficinaService;
 import org.springframework.stereotype.Service;
 
@@ -29,8 +28,8 @@ public class ClienteService {
         this.oficinaService = oficinaService;
     }
 
-    public Cliente encontrarPeloId(Long id){
-        return clienteRepository.findById(id).orElseThrow(() -> new RecursoNaoEncontrado("Cliente de id: " + id + " não encontrado"));
+    public Cliente encontrarPeloId(Long clienteId, Long oficinaId){
+        return clienteRepository.findByClienteIdAndOficina_oficinaId(clienteId, oficinaId).orElseThrow(() -> new RecursoNaoEncontrado("Cliente de id: " + clienteId + " não encontrado"));
     }
 
     public ClienteResponse saveCliente(ClienteRequest clienteRequest, Long oficinaId){
@@ -43,7 +42,7 @@ public class ClienteService {
     }
 
     public ClienteResponse findClienteById(Long id, Long oficinaId) {
-        Cliente clienteEncontrado = encontrarPeloId(id);
+        Cliente clienteEncontrado = encontrarPeloId(id, oficinaId);
         return clienteMapper.toResponse(clienteEncontrado);
     }
 
@@ -59,7 +58,7 @@ public class ClienteService {
     }
 
     public ClienteResponse updateCliente(ClienteUpdateRequest clienteUpdateRequest, Long id, Long oficinaId){
-        Cliente clienteEncontrado = encontrarPeloId(id);
+        Cliente clienteEncontrado = encontrarPeloId(id, oficinaId);
 
         clienteEncontrado.setNomeCliente(clienteUpdateRequest.nomeCliente());
         clienteEncontrado.setStatus(clienteUpdateRequest.status());

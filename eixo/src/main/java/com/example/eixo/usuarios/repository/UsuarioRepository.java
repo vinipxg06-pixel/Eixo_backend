@@ -1,6 +1,5 @@
 package com.example.eixo.usuarios.repository;
 
-import com.example.eixo.cliente.model.Cliente;
 import com.example.eixo.usuarios.model.Usuario;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;

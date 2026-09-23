@@ -1,15 +1,13 @@
-package com.example.eixo.ocPecas.api.dto.response;
-
-import jakarta.validation.constraints.NotBlank;
+package com.example.eixo.ocpecas.api.dto.response;
 
 import java.math.BigDecimal;
 
 public record OcPecasResponse(
-        @NotBlank
-    Long idOcPecas,
-        @NotBlank
-    BigDecimal valor,
-        BigDecimal quantidade
-
+        Long idOcPecas,
+        Long estoqueId,
+        String nomePeca,
+        BigDecimal valor,
+        BigDecimal quantidade,
+        BigDecimal subtotal
 ) {
 }
