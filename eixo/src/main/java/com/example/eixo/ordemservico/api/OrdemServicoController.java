@@ -41,7 +41,7 @@ public class OrdemServicoController {
         ordemServicoService.deletarOrdemServico(ordemServicoId);
     }
 
-    @PostMapping("/{clienteId}/{veiculoId}/{oficinaId}")
+    @PostMapping("/{clienteId}/{veiculoId}")
     public ResponseEntity<OrdemServicoResponse> salvarOrdemServico(@Valid @RequestBody OrdemServicoResquest ordemServicoResquest,@PathVariable Long oficinaId,@PathVariable Long clienteId,@PathVariable Long veiculoId,@PathVariable Long orcamentoId){
         return ResponseEntity.ok().body(ordemServicoService.criarOrdemServico(ordemServicoResquest, oficinaId, clienteId, veiculoId, orcamentoId));
     }

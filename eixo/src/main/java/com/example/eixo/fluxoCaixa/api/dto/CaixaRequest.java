@@ -1,5 +1,4 @@
 package com.example.eixo.fluxoCaixa.api.dto;
-
 import com.example.eixo.fluxoCaixa.model.Categoria;
 import com.example.eixo.fluxoCaixa.model.Tipo;
 import jakarta.validation.constraints.NotBlank;

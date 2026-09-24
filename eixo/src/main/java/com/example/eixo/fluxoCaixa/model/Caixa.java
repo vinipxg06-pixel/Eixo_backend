@@ -6,10 +6,8 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
-import jakarta.persistence.*;
 
 import java.math.BigDecimal;
-import java.security.PrivateKey;
 import java.time.LocalDateTime;
 
 @Entity
@@ -18,7 +16,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 
 public class Caixa {
-
+@Id
     @Column(name = "id_fluxo_caixa")
     private Long idFluxoCaixa;
 

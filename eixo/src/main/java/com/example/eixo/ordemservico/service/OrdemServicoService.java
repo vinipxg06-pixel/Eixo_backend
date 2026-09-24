@@ -1,12 +1,10 @@
 package com.example.eixo.ordemservico.service;
 
 import com.example.eixo.cliente.model.Cliente;
-import com.example.eixo.cliente.model.Status;
 import com.example.eixo.cliente.service.ClienteService;
 import com.example.eixo.excecao.excecoespersonalizadas.RecursoNaoEncontrado;
 import com.example.eixo.oficina.model.Oficina;
 import com.example.eixo.oficina.service.OficinaService;
-import com.example.eixo.orcamento.api.request.OrcamentoStatusRequest;
 import com.example.eixo.orcamento.model.Orcamento;
 import com.example.eixo.orcamento.service.OrcamentoService;
 import com.example.eixo.ordemservico.api.request.OrdemServicoResquest;
@@ -20,7 +18,6 @@ import com.example.eixo.veiculo.model.Veiculo;
 import com.example.eixo.veiculo.service.VeiculoService;
 import org.springframework.stereotype.Service;
 
-import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,7 +37,7 @@ public class OrdemServicoService {
     }
 
     public List<OrdemServicoResponse> listarOrdensServico(Long oficinaId){
-        List<OrdemServico> listaOrdensServico = ordemServicoRespository.findAllByOrdemServico_oficinaId(oficinaId);
+        List<OrdemServico> listaOrdensServico = ordemServicoRespository.findAllByOficina_oficinaId(oficinaId);
         List<OrdemServicoResponse> listaOsEncontrada = new ArrayList<>();
 
         for (OrdemServico lisOrdemServico1 : listaOrdensServico){
