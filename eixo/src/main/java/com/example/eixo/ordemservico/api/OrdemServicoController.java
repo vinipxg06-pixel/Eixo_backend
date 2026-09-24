@@ -14,6 +14,10 @@ import java.util.List;
 @RestController
 @RequestMapping("/oficinas/{oficinaId}/ordens-servico")
 @RequiredArgsConstructor
+@CrossOrigin(origins = {
+        "http://localhost:5500",
+        "http://127.0.0.1:5500"
+})
 public class OrdemServicoController {
 
     private final OrdemServicoService ordemServicoService;
@@ -36,5 +40,10 @@ public class OrdemServicoController {
     @PutMapping("/{ordemServicoId}")
     public ResponseEntity<OrdemServicoResponse> atualizar(@Valid @RequestBody OrdemServicoUpdateRequest request, @PathVariable Long oficinaId, @PathVariable Long ordemServicoId) {
         return ResponseEntity.ok(ordemServicoService.atualizarOrdemServico(request, ordemServicoId, oficinaId));
+    }
+
+    @PostMapping("/{ordemServicoId}/fechar")
+    public ResponseEntity<OrdemServicoResponse> fechar(@PathVariable Long oficinaId, @PathVariable Long ordemServicoId) {
+        return ResponseEntity.ok(ordemServicoService.fecharOrdemServico(ordemServicoId, oficinaId));
     }
 }

@@ -9,6 +9,7 @@ import com.example.eixo.pecasestoque.api.dto.PecaEstoqueRequest;
 import com.example.eixo.pecasestoque.api.dto.PecaEstoqueResponse;
 import com.example.eixo.pecasestoque.mapper.PecaEstoqueMapper;
 import com.example.eixo.pecasestoque.model.PecaEstoque;
+import com.example.eixo.fluxocaixa.service.MovimentacaoFluxoCaixaService;
 import com.example.eixo.pecasestoque.repository.PecaEstoqueRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
@@ -24,15 +25,17 @@ public class PecaEstoqueService {
     private final PecaEstoqueRepository pecaEstoqueRepository;
     private final OficinaService oficinaService;
     private final PecaEstoqueMapper pecaEstoqueMapper;
+    private final MovimentacaoFluxoCaixaService movimentacaoFluxoCaixaService;
 
     public PecaEstoqueService(
             PecaEstoqueRepository pecaEstoqueRepository,
             OficinaService oficinaService,
-            PecaEstoqueMapper pecaEstoqueMapper
+            PecaEstoqueMapper pecaEstoqueMapper, MovimentacaoFluxoCaixaService movimentacaoFluxoCaixaService
     ) {
         this.pecaEstoqueRepository = pecaEstoqueRepository;
         this.oficinaService = oficinaService;
         this.pecaEstoqueMapper = pecaEstoqueMapper;
+        this.movimentacaoFluxoCaixaService = movimentacaoFluxoCaixaService;
     }
 
     public PecaEstoque encontrarPecaPeloId(Long estoqueId, Long oficinaId) {
@@ -160,6 +163,7 @@ public class PecaEstoqueService {
         pecaEstoque.setPrecoUnitario(novoPrecoMedio);
 
         PecaEstoque pecaSalva = pecaEstoqueRepository.save(pecaEstoque);
+        movimentacaoFluxoCaixaService.registrarDespesaEntradaEstoque(pecaSalva, quantidadeEntrada, precoUnitarioEntrada);
 
         return pecaEstoqueMapper.transformarEmResponse(pecaSalva);
     }

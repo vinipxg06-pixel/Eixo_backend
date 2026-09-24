@@ -20,6 +20,7 @@ import com.example.eixo.veiculo.model.Veiculo;
 import com.example.eixo.veiculo.service.VeiculoService;
 import com.example.eixo.excecao.excecoespersonalizadas.RegraDeNegocio;
 import com.example.eixo.orcamento.model.Orcamento;
+import com.example.eixo.fluxocaixa.service.MovimentacaoFluxoCaixaService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -40,6 +41,7 @@ public class OrdemServicoService {
     private final OficinaService oficinaService;
     private final ClienteService clienteService;
     private final VeiculoService veiculoService;
+    private final MovimentacaoFluxoCaixaService movimentacaoFluxoCaixaService;
 
     @Transactional(readOnly = true)
     public OrdemServico findById(Long ordemServicoId, Long oficinaId) {
@@ -134,5 +136,20 @@ public class OrdemServicoService {
         ordemServico.setValorTotal(ordemServico.maoDeObraOuZero().setScale(
                                 2, RoundingMode.HALF_UP));
         return ordemServicoRepository.save(ordemServico);
+    }
+
+    @Transactional
+    public OrdemServicoResponse fecharOrdemServico(Long ordemServicoId, Long oficinaId) {
+        OrdemServico ordemServico = findById(ordemServicoId, oficinaId);
+
+        ordemServico.garantirEditavel();
+        recalcularTotal(ordemServico);
+
+        ordemServico.setStatus(StatusOrdemServico.Fechada);
+        ordemServico.setDataFechamento(LocalDate.now());
+        OrdemServico ordemServicoSalva = ordemServicoRepository.save(ordemServico);
+        movimentacaoFluxoCaixaService.registrarReceitaFechamentoOrdemServico(ordemServicoSalva);
+
+        return ordemServicoMapper.transformarEmResposta(ordemServicoSalva);
     }
 }

@@ -12,6 +12,10 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/oficinas/{oficinaId}/ordens-servico/{ordemServicoId}/pecas")
 @RequiredArgsConstructor
+@CrossOrigin(origins = {
+        "http://localhost:5500",
+        "http://127.0.0.1:5500"
+})
 public class OsPecasController {
 
     private final OsPecasService osPecasService;
