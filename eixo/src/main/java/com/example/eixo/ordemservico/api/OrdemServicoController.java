@@ -37,4 +37,9 @@ public class OrdemServicoController {
     public ResponseEntity<OrdemServicoResponse> atualizar(@Valid @RequestBody OrdemServicoUpdateRequest request, @PathVariable Long oficinaId, @PathVariable Long ordemServicoId) {
         return ResponseEntity.ok(ordemServicoService.atualizarOrdemServico(request, ordemServicoId, oficinaId));
     }
+
+    @PostMapping("/{ordemServicoId}/fechar")
+    public ResponseEntity<OrdemServicoResponse> fechar(@PathVariable Long oficinaId, @PathVariable Long ordemServicoId) {
+        return ResponseEntity.ok(ordemServicoService.fecharOrdemServico(ordemServicoId, oficinaId));
+    }
 }
