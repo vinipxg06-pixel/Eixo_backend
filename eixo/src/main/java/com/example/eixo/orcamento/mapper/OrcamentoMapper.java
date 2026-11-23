@@ -1,23 +1,16 @@
 package com.example.eixo.orcamento.mapper;
 
-import com.example.eixo.orcamento.api.response.OrcamentoResponse;
+import com.example.eixo.config.MapStructConfig;
+import com.example.eixo.orcamento.api.dto.OrcamentoResponse;
 import com.example.eixo.orcamento.model.Orcamento;
-import org.springframework.stereotype.Component;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 
-@Component
-public class OrcamentoMapper {
+@Mapper(config = MapStructConfig.class)
+public interface OrcamentoMapper {
 
-    public OrcamentoResponse transformarEmResposta(Orcamento orcamento) {
-        return new OrcamentoResponse(
-                orcamento.getIdOrcamento(),
-                orcamento.getCliente().getClienteId(),
-                orcamento.getVeiculo().getIdVeiculo(),
-                orcamento.getStatus(),
-                orcamento.getDescricao(),
-                orcamento.getMaoDeObra(),
-                orcamento.getValorTotal(),
-                orcamento.getCreatedAt()
-        );
-    }
-
+    @Mapping(target = "orcamentoId", source = "idOrcamento")
+    @Mapping(target = "clienteId", source = "cliente.clienteId")
+    @Mapping(target = "veiculoId", source = "veiculo.idVeiculo")
+    OrcamentoResponse paraResposta(Orcamento orcamento);
 }

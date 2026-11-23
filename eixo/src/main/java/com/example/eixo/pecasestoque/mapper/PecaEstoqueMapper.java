@@ -1,38 +1,27 @@
 package com.example.eixo.pecasestoque.mapper;
 
+import com.example.eixo.config.MapStructConfig;
 import com.example.eixo.pecasestoque.api.dto.PecaEstoqueRequest;
 import com.example.eixo.pecasestoque.api.dto.PecaEstoqueResponse;
 import com.example.eixo.pecasestoque.model.PecaEstoque;
-import org.springframework.stereotype.Component;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 
-@Component
-public class PecaEstoqueMapper {
+@Mapper(config = MapStructConfig.class)
+public interface PecaEstoqueMapper {
 
-    public PecaEstoque transformarEmEntidade(PecaEstoqueRequest pecaEstoqueRequest){
-        PecaEstoque pecaEstoque = new PecaEstoque();
+    // ativa fica com o valor padrão da entidade; id, oficina e datas são definidos pelo PecaEstoqueService
+    @Mapping(target = "estoqueId", ignore = true)
+    @Mapping(target = "createdAt", ignore = true)
+    @Mapping(target = "updatedAt", ignore = true)
+    @Mapping(target = "oficina", ignore = true)
+    @Mapping(target = "listaOcPecas", ignore = true)
+    @Mapping(target = "listaOsPecas", ignore = true)
+    @Mapping(target = "ativa", ignore = true)
+    PecaEstoque paraEntidade(PecaEstoqueRequest pecaEstoqueRequest);
 
-        pecaEstoque.setNomePeca(pecaEstoqueRequest.nomePeca());
-        pecaEstoque.setQuantidade(pecaEstoqueRequest.quantidade());
-        pecaEstoque.setCategoria(pecaEstoqueRequest.categoria());
-        pecaEstoque.setCodigoBarras(pecaEstoqueRequest.codigoBarras());
-        pecaEstoque.setEstoqueMinimo(pecaEstoqueRequest.estoqueMinimo());
-        pecaEstoque.setPrecoUnitario(pecaEstoqueRequest.precoUnitario());
-        pecaEstoque.setUnidadeMedida(pecaEstoqueRequest.unidadeMedida());
-
-        return pecaEstoque;
-    }
-
-    public PecaEstoqueResponse transformarEmResponse(PecaEstoque pecaEstoque){
-        return new PecaEstoqueResponse(
-                pecaEstoque.getEstoqueId(),
-                pecaEstoque.getNomePeca(),
-                pecaEstoque.getQuantidade(),
-                pecaEstoque.getCategoria(),
-                pecaEstoque.getCodigoBarras(),
-                pecaEstoque.getEstoqueMinimo(),
-                pecaEstoque.getPrecoUnitario(),
-                pecaEstoque.getUnidadeMedida(),
-                pecaEstoque.getOficina().getOficinaId()
-        );
-    }
+    @Mapping(target = "oficinaId", source = "oficina.oficinaId")
+    // regra da entidade, não o campo cru (ativa pode estar null)
+    @Mapping(target = "ativa", expression = "java(pecaEstoque.estaAtiva())")
+    PecaEstoqueResponse paraResposta(PecaEstoque pecaEstoque);
 }

@@ -1,53 +1,46 @@
 package com.example.eixo.usuarios.api;
 
-import com.example.eixo.usuarios.api.dto.*;
+import com.example.eixo.usuarios.api.dto.UsuarioRequest;
+import com.example.eixo.usuarios.api.dto.UsuarioResponse;
+import com.example.eixo.usuarios.api.dto.UsuarioUpdateRequest;
 import com.example.eixo.usuarios.service.UsuarioService;
 import jakarta.validation.Valid;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/usuarios")
-@CrossOrigin(origins = {
-        "http://localhost:5500",
-        "http://127.0.0.1:5500"
-})
-@AllArgsConstructor
+@RequestMapping("/oficinas/{oficinaId}/usuarios")
+@RequiredArgsConstructor
 public class UsuariosController {
 
     private final UsuarioService usuarioService;
 
+    @GetMapping
+    public ResponseEntity<List<UsuarioResponse>> listar(@PathVariable Long oficinaId) {
+        return ResponseEntity.ok(usuarioService.listar(oficinaId));
+    }
+
     @GetMapping("/{id}")
-    public ResponseEntity<UsuarioResponse>getUsuarioById(@PathVariable Long id){
-        return ResponseEntity.ok().body(usuarioService.findById(id));
+    public ResponseEntity<UsuarioResponse> buscar(@PathVariable Long oficinaId, @PathVariable Long id) {
+        return ResponseEntity.ok(usuarioService.buscar(id, oficinaId));
     }
 
-    @GetMapping("/oficinaUsuarios/{id}")
-    public ResponseEntity<List<UsuarioResponse>> getUsuariosByOficinaID(@PathVariable Long id){
-        return ResponseEntity.ok().body(usuarioService.findAllUsuariosByOficinaId(id));
-    }
-
-    @PostMapping("/oficinaUsuarios/{oficinaId}")
-    public ResponseEntity<UsuarioResponse>postUsuario(@Valid @RequestBody UsuarioRequest usuariosRequest, @PathVariable Long oficinaId){
-        return ResponseEntity.status(201).body(usuarioService.saveUsuario(usuariosRequest, oficinaId));
-    }
-
-    @PostMapping("/login")
-    public ResponseEntity<LoginResponse>postLogin(@Valid @RequestBody LoginRequest loginRequest){
-        return ResponseEntity.status(201).body(usuarioService.login(loginRequest));
+    @PostMapping
+    public ResponseEntity<UsuarioResponse> criar(@Valid @RequestBody UsuarioRequest usuarioRequest, @PathVariable Long oficinaId) {
+        return ResponseEntity.status(201).body(usuarioService.criar(usuarioRequest, oficinaId));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<UsuarioResponse>putUsuario(@Valid @RequestBody UsuarioUpdateRequest usuarioUpdateRequest, @PathVariable Long id){
-        return ResponseEntity.ok().body(usuarioService.updateUsuario(usuarioUpdateRequest, id));
+    public ResponseEntity<UsuarioResponse> atualizar(@Valid @RequestBody UsuarioUpdateRequest usuarioUpdateRequest, @PathVariable Long oficinaId, @PathVariable Long id) {
+        return ResponseEntity.ok(usuarioService.atualizar(usuarioUpdateRequest, id, oficinaId));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteUsuario(@PathVariable Long id){
-        usuarioService.deleteUsuario(id);
+    public ResponseEntity<Void> excluir(@PathVariable Long oficinaId, @PathVariable Long id) {
+        usuarioService.excluir(id, oficinaId);
         return ResponseEntity.noContent().build();
     }
 }

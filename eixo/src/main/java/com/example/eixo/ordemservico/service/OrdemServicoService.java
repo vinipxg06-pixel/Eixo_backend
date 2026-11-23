@@ -1,7 +1,7 @@
 package com.example.eixo.ordemservico.service;
 
 import com.example.eixo.cliente.model.Cliente;
-import com.example.eixo.cliente.model.Status;
+import com.example.eixo.cliente.model.StatusCliente;
 import com.example.eixo.cliente.service.ClienteService;
 import com.example.eixo.excecao.excecoespersonalizadas.RecursoNaoEncontrado;
 import com.example.eixo.excecao.excecoespersonalizadas.RegraDeNegocio;
@@ -12,14 +12,13 @@ import com.example.eixo.ordemservico.api.dto.OrdemServicoRequest;
 import com.example.eixo.ordemservico.api.dto.OrdemServicoUpdateRequest;
 import com.example.eixo.ordemservico.api.dto.OrdemServicoResponse;
 import com.example.eixo.ordemservico.mapper.OrdemServicoMapper;
+import com.example.eixo.ordemservico.model.MotivoCancelamentoOrdemServico;
 import com.example.eixo.ordemservico.model.OrdemServico;
 import com.example.eixo.ordemservico.model.StatusOrdemServico;
 import com.example.eixo.ordemservico.repository.OrdemServicoRepository;
 import com.example.eixo.ospecas.repository.OsPecasRepository;
 import com.example.eixo.veiculo.model.Veiculo;
 import com.example.eixo.veiculo.service.VeiculoService;
-import com.example.eixo.excecao.excecoespersonalizadas.RegraDeNegocio;
-import com.example.eixo.orcamento.model.Orcamento;
 import com.example.eixo.fluxocaixa.service.MovimentacaoFluxoCaixaService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -44,37 +43,38 @@ public class OrdemServicoService {
     private final MovimentacaoFluxoCaixaService movimentacaoFluxoCaixaService;
 
     @Transactional(readOnly = true)
-    public OrdemServico findById(Long ordemServicoId, Long oficinaId) {
+    public OrdemServico buscarEntidade(Long ordemServicoId, Long oficinaId) {
         return ordemServicoRepository.findByIdOrdemServicoAndOficina_OficinaId(ordemServicoId, oficinaId)
                 .orElseThrow(() -> new RecursoNaoEncontrado(
                         "Ordem de serviço de id: " + ordemServicoId + " não encontrada"));
     }
 
     @Transactional(readOnly = true)
-    public OrdemServicoResponse encontrarOrdemServicoPeloId(Long ordemServicoId, Long oficinaId) {
-        return ordemServicoMapper.transformarEmResposta(findById(ordemServicoId, oficinaId));
+    public OrdemServicoResponse buscar(Long ordemServicoId, Long oficinaId) {
+        return ordemServicoMapper.paraResposta(buscarEntidade(ordemServicoId, oficinaId));
     }
 
     @Transactional(readOnly = true)
-    public List<OrdemServicoResponse> listaOrdensServico(Long oficinaId) {
+    public List<OrdemServicoResponse> listar(Long oficinaId) {
         List<OrdemServico> listaOrdemServico = ordemServicoRepository.findAllByOficina_OficinaId(oficinaId);
         List<OrdemServicoResponse> listaOrdemServicoResponse = new ArrayList<>();
 
         for (OrdemServico ordemServico : listaOrdemServico) {
-            OrdemServicoResponse ordemServicoResponse = ordemServicoMapper.transformarEmResposta(ordemServico);
+            OrdemServicoResponse ordemServicoResponse = ordemServicoMapper.paraResposta(ordemServico);
             listaOrdemServicoResponse.add(ordemServicoResponse);
         }
         return listaOrdemServicoResponse;
     }
 
     @Transactional
-    public OrdemServicoResponse salvarOrdemServico(OrdemServicoRequest request, Long oficinaId, Long clienteId, Long veiculoId) {
+    /** Cria a OS sem peças; as peças são tratadas pelo OrdemServicoComPecasService. */
+    public OrdemServico criar(OrdemServicoRequest request, Long oficinaId) {
 
-        Oficina oficina = oficinaService.findById(oficinaId);
-        Cliente cliente = clienteService.encontrarPeloId(clienteId, oficinaId);
-        Veiculo veiculo = veiculoService.encontrarPeloId(veiculoId, oficinaId);
+        Oficina oficina = oficinaService.buscarEntidade(oficinaId);
+        Cliente cliente = clienteService.buscarEntidade(request.clienteId(), oficinaId);
+        Veiculo veiculo = veiculoService.buscarEntidade(request.veiculoId(), oficinaId);
 
-        if (cliente.getStatus() == Status.Inativo) {
+        if (cliente.getStatus() == StatusCliente.Inativo) {
             throw new RegraDeNegocio("Cliente " + cliente.getNomeCliente() + " está inativo");
         }
 
@@ -93,17 +93,17 @@ public class OrdemServicoService {
         ordemServico.setDataAbertura(LocalDate.now());
         ordemServico.setValorTotal(ordemServico.maoDeObraOuZero().setScale(2, RoundingMode.HALF_UP));
 
-        return ordemServicoMapper.transformarEmResposta(ordemServicoRepository.save(ordemServico));
+        return ordemServicoRepository.save(ordemServico);
     }
 
+    /** Atualiza descrição e mão de obra; o total é recalculado depois de sincronizar as peças. */
     @Transactional
-    public OrdemServicoResponse atualizarOrdemServico(OrdemServicoUpdateRequest request, Long ordemServicoId, Long oficinaId) {
-        OrdemServico ordemServico = findById(ordemServicoId, oficinaId);
+    public OrdemServico atualizarDados(OrdemServicoUpdateRequest request, Long ordemServicoId, Long oficinaId) {
+        OrdemServico ordemServico = buscarEntidade(ordemServicoId, oficinaId);
         ordemServico.garantirEditavel();
         ordemServico.setDescricao(request.descricao());
         ordemServico.setMaoDeObra(request.maoDeObra() == null ? BigDecimal.ZERO : request.maoDeObra());
-        recalcularTotal(ordemServico);
-        return ordemServicoMapper.transformarEmResposta(ordemServico);
+        return ordemServico;
     }
 
     public BigDecimal recalcularTotal(OrdemServico ordemServico) {
@@ -138,18 +138,39 @@ public class OrdemServicoService {
         return ordemServicoRepository.save(ordemServico);
     }
 
+    /**
+     * Regras do fechamento:
+     * - a OS pode ser fechada sem valor (ex.: retorno de garantia), mas isso precisa ser confirmado explicitamente;
+     * - a receita só é lançada no caixa quando há valor a receber (OS sem custo não gera lançamento de R$ 0).
+     */
     @Transactional
-    public OrdemServicoResponse fecharOrdemServico(Long ordemServicoId, Long oficinaId) {
-        OrdemServico ordemServico = findById(ordemServicoId, oficinaId);
+    public OrdemServicoResponse fecharOrdemServico(Long ordemServicoId, Long oficinaId, boolean confirmarSemCusto) {
+        OrdemServico ordemServico = buscarEntidade(ordemServicoId, oficinaId);
 
         ordemServico.garantirEditavel();
-        recalcularTotal(ordemServico);
+        BigDecimal total = recalcularTotal(ordemServico);
+        boolean semCusto = total.compareTo(BigDecimal.ZERO) == 0;
+        if (semCusto && !confirmarSemCusto) {
+            throw new RegraDeNegocio("A ordem de serviço está sem valor. Confirme que é um serviço sem custo para fechá-la");
+        }
 
-        ordemServico.setStatus(StatusOrdemServico.Fechada);
-        ordemServico.setDataFechamento(LocalDate.now());
+        ordemServico.fechar();
         OrdemServico ordemServicoSalva = ordemServicoRepository.save(ordemServico);
-        movimentacaoFluxoCaixaService.registrarReceitaFechamentoOrdemServico(ordemServicoSalva);
+        if (!semCusto) {
+            movimentacaoFluxoCaixaService.registrarReceitaFechamentoOrdemServico(ordemServicoSalva);
+        }
 
-        return ordemServicoMapper.transformarEmResposta(ordemServicoSalva);
+        return ordemServicoMapper.paraResposta(ordemServicoSalva);
+    }
+
+    /**
+     * Muda a OS para Cancelada. A devolução das peças ao estoque é feita pelo OrdemServicoComPecasService,
+     * na mesma transação. Cancelamento nunca gera lançamento no caixa.
+     */
+    @Transactional
+    public OrdemServico cancelar(Long ordemServicoId, Long oficinaId, MotivoCancelamentoOrdemServico motivo) {
+        OrdemServico ordemServico = buscarEntidade(ordemServicoId, oficinaId);
+        ordemServico.cancelar(motivo);
+        return ordemServicoRepository.save(ordemServico);
     }
 }

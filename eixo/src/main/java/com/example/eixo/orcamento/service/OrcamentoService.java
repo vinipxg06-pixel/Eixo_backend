@@ -1,7 +1,7 @@
 package com.example.eixo.orcamento.service;
 
 import com.example.eixo.cliente.model.Cliente;
-import com.example.eixo.cliente.model.Status;
+import com.example.eixo.cliente.model.StatusCliente;
 import com.example.eixo.cliente.service.ClienteService;
 import com.example.eixo.excecao.excecoespersonalizadas.EstoqueInsuficiente;
 import com.example.eixo.excecao.excecoespersonalizadas.RecursoNaoEncontrado;
@@ -10,9 +10,9 @@ import com.example.eixo.ocpecas.model.OcPecas;
 import com.example.eixo.ocpecas.repository.OcPecasRepository;
 import com.example.eixo.oficina.model.Oficina;
 import com.example.eixo.oficina.service.OficinaService;
-import com.example.eixo.orcamento.api.request.OrcamentoRequest;
-import com.example.eixo.orcamento.api.request.OrcamentoUpdateRequest;
-import com.example.eixo.orcamento.api.response.OrcamentoResponse;
+import com.example.eixo.orcamento.api.dto.OrcamentoRequest;
+import com.example.eixo.orcamento.api.dto.OrcamentoUpdateRequest;
+import com.example.eixo.orcamento.api.dto.OrcamentoResponse;
 import com.example.eixo.orcamento.mapper.OrcamentoMapper;
 import com.example.eixo.orcamento.model.Orcamento;
 import com.example.eixo.orcamento.model.StatusOrcamento;
@@ -30,7 +30,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -46,7 +48,7 @@ public class OrcamentoService {
     private final OsPecasService osPecasService;
 
     @Transactional(readOnly = true)
-    public Orcamento findById(Long orcamentoId, Long oficinaId) {
+    public Orcamento buscarEntidade(Long orcamentoId, Long oficinaId) {
         return orcamentoRepository
                 .findByIdOrcamentoAndOficina_oficinaId(orcamentoId, oficinaId)
                 .orElseThrow(() -> new RecursoNaoEncontrado(
@@ -54,16 +56,16 @@ public class OrcamentoService {
     }
 
     @Transactional(readOnly = true)
-    public OrcamentoResponse encontrarOrcamentoPeloId(Long orcamentoId, Long oficinaId) {
-        return orcamentoMapper.transformarEmResposta(findById(orcamentoId, oficinaId));
+    public OrcamentoResponse buscar(Long orcamentoId, Long oficinaId) {
+        return orcamentoMapper.paraResposta(buscarEntidade(orcamentoId, oficinaId));
     }
 
     @Transactional(readOnly = true)
-    public List<OrcamentoResponse> listaOrcamentos(Long oficinaId) {
+    public List<OrcamentoResponse> listar(Long oficinaId) {
         List<Orcamento> listaOrcamento = orcamentoRepository.findAllByOficina_oficinaId(oficinaId);
         List<OrcamentoResponse> listaOrcamentoResponse = new ArrayList<>();
         for(Orcamento orcamento : listaOrcamento){
-            OrcamentoResponse orcamentoResponse = orcamentoMapper.transformarEmResposta(orcamento);
+            OrcamentoResponse orcamentoResponse = orcamentoMapper.paraResposta(orcamento);
             listaOrcamentoResponse.add(orcamentoResponse);
         }
         return listaOrcamentoResponse;
@@ -71,13 +73,14 @@ public class OrcamentoService {
 
 
     @Transactional
-    public OrcamentoResponse salvarOrcamento(OrcamentoRequest request, Long oficinaId, Long clienteId, Long veiculoId) {
+    /** Cria o orçamento sem peças; as peças são tratadas pelo OrcamentoComPecasService. */
+    public Orcamento criar(OrcamentoRequest request, Long oficinaId) {
 
-        Oficina oficina = oficinaService.findById(oficinaId);
-        Cliente cliente = clienteService.encontrarPeloId(clienteId, oficinaId);
-        Veiculo veiculo = veiculoService.encontrarPeloId(veiculoId, oficinaId);
+        Oficina oficina = oficinaService.buscarEntidade(oficinaId);
+        Cliente cliente = clienteService.buscarEntidade(request.clienteId(), oficinaId);
+        Veiculo veiculo = veiculoService.buscarEntidade(request.veiculoId(), oficinaId);
 
-        if (cliente.getStatus() == Status.Inativo) {
+        if (cliente.getStatus() == StatusCliente.Inativo) {
             throw new RegraDeNegocio(
                     "Cliente " + cliente.getNomeCliente() + " está inativo");
         }
@@ -99,12 +102,13 @@ public class OrcamentoService {
         orcamento.setStatus(StatusOrcamento.Pendente);
         orcamento.setValorTotal(orcamento.maoDeObraOuZero().setScale(2, RoundingMode.HALF_UP));
 
-        return orcamentoMapper.transformarEmResposta(orcamentoRepository.save(orcamento));
+        return orcamentoRepository.save(orcamento);
     }
 
+    /** Atualiza descrição e mão de obra; o total é recalculado depois de sincronizar as peças. */
     @Transactional
-    public OrcamentoResponse atualizarOrcamento(OrcamentoUpdateRequest request, Long orcamentoId, Long oficinaId) {
-        Orcamento orcamento = findById(orcamentoId, oficinaId);
+    public Orcamento atualizarDados(OrcamentoUpdateRequest request, Long orcamentoId, Long oficinaId) {
+        Orcamento orcamento = buscarEntidade(orcamentoId, oficinaId);
         orcamento.garantirEditavel();
 
         orcamento.setDescricao(request.descricao());
@@ -112,21 +116,20 @@ public class OrcamentoService {
                 ? BigDecimal.ZERO
                 : request.maoDeObra());
 
-        recalcularTotal(orcamento);
-        return orcamentoMapper.transformarEmResposta(orcamento);
+        return orcamento;
     }
 
     @Transactional
     public OrcamentoResponse recusar(Long orcamentoId, Long oficinaId) {
-        Orcamento orcamento = findById(orcamentoId, oficinaId);
+        Orcamento orcamento = buscarEntidade(orcamentoId, oficinaId);
         orcamento.garantirEditavel();
         orcamento.setStatus(StatusOrcamento.Recusado);
-        return orcamentoMapper.transformarEmResposta(orcamento);
+        return orcamentoMapper.paraResposta(orcamento);
     }
 
     @Transactional
     public OrcamentoResponse aprovar(Long orcamentoId, Long oficinaId) {
-        Orcamento orcamento = findById(orcamentoId, oficinaId);
+        Orcamento orcamento = buscarEntidade(orcamentoId, oficinaId);
         validarParaAprovacao(orcamento);
 
         OrdemServico ordemServico = ordemServicoService.criarAPartirDoOrcamento(orcamento);
@@ -138,12 +141,12 @@ public class OrcamentoService {
 
         ordemServicoService.recalcularTotal(ordemServico);
         orcamento.setStatus(StatusOrcamento.Aprovado);
-        return orcamentoMapper.transformarEmResposta(orcamento);
+        return orcamentoMapper.paraResposta(orcamento);
     }
 
     @Transactional
-    public void deletarOrcamento(Long orcamentoId, Long oficinaId) {
-        Orcamento orcamento = findById(orcamentoId, oficinaId);
+    public void excluir(Long orcamentoId, Long oficinaId) {
+        Orcamento orcamento = buscarEntidade(orcamentoId, oficinaId);
 
         orcamento.garantirEditavel();
 
@@ -168,8 +171,8 @@ public class OrcamentoService {
     }
 
 
-    @Transactional(readOnly = true)
-    public void validarParaAprovacao(Orcamento orcamento) {
+    /** Executa dentro da transação de aprovar(). */
+    private void validarParaAprovacao(Orcamento orcamento) {
         orcamento.garantirEditavel();
 
         if (orcamento.getValorTotal() == null
@@ -178,16 +181,23 @@ public class OrcamentoService {
                     "Orçamento sem valor não pode ser aprovado");
         }
 
+        // Uma peça pode estar em várias linhas (uma por preço): o estoque é conferido pelo total da peça.
         List<OcPecas> itens = ocPecasRepository.findAllByOrcamento_idOrcamento(orcamento.getIdOrcamento());
-
-        List<String> faltantes = new ArrayList<>();
-
+        Map<Long, PecaEstoque> pecas = new LinkedHashMap<>();
+        Map<Long, BigDecimal> quantidadeNecessaria = new LinkedHashMap<>();
         for (OcPecas item : itens) {
             PecaEstoque peca = item.getPecaEstoque();
-            if (peca.getQuantidade().compareTo(item.getQuantidade()) < 0) {
+            pecas.put(peca.getEstoqueId(), peca);
+            quantidadeNecessaria.merge(peca.getEstoqueId(), item.getQuantidade(), BigDecimal::add);
+        }
+
+        List<String> faltantes = new ArrayList<>();
+        for (Map.Entry<Long, BigDecimal> necessidade : quantidadeNecessaria.entrySet()) {
+            PecaEstoque peca = pecas.get(necessidade.getKey());
+            if (peca.getQuantidade().compareTo(necessidade.getValue()) < 0) {
                 faltantes.add(peca.getNomePeca()
                         + " (disponível: " + peca.getQuantidade()
-                        + ", necessário: " + item.getQuantidade() + ")");
+                        + ", necessário: " + necessidade.getValue() + ")");
             }
         }
 

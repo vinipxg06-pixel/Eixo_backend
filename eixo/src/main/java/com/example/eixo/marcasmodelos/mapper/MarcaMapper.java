@@ -1,16 +1,12 @@
 package com.example.eixo.marcasmodelos.mapper;
 
-import com.example.eixo.marcasmodelos.api.dtos.MarcaResponse;
+import com.example.eixo.config.MapStructConfig;
+import com.example.eixo.marcasmodelos.api.dto.MarcaResponse;
 import com.example.eixo.marcasmodelos.model.Marca;
-import org.springframework.stereotype.Component;
+import org.mapstruct.Mapper;
 
-@Component
-public class MarcaMapper {
+@Mapper(config = MapStructConfig.class)
+public interface MarcaMapper {
 
-    public MarcaResponse toResponse (Marca marca){
-        return new MarcaResponse(
-                marca.getIdMarca(),
-                marca.getNomeMarca()
-        );
-    }
+    MarcaResponse paraResposta(Marca marca);
 }

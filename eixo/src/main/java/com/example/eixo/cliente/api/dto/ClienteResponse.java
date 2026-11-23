@@ -1,12 +1,12 @@
 package com.example.eixo.cliente.api.dto;
 
-import com.example.eixo.cliente.model.Status;
+import com.example.eixo.cliente.model.StatusCliente;
 
 public record ClienteResponse(
         Long clienteId,
         String nomeCliente,
-        Status status,
-        String cpfcnpj,
+        StatusCliente status,
+        String cpfCnpj,
         String telefone,
         String email,
         Long oficinaId

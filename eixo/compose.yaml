@@ -1,10 +1,17 @@
+# MySQL local para desenvolvimento (opcional — use se não tiver MySQL instalado).
+# Subir:  docker compose up -d     Parar:  docker compose down
+# O Docker Compose lê automaticamente o .env desta pasta (DB_PASSWORD).
+# Usa o usuário root; mantenha DB_USER=root no .env ao usar este container.
 services:
   mysql:
-    image: 'mysql:latest'
+    image: 'mysql:8.4'
     environment:
-      - 'MYSQL_DATABASE=mydatabase'
-      - 'MYSQL_PASSWORD=secret'
-      - 'MYSQL_ROOT_PASSWORD=verysecret'
-      - 'MYSQL_USER=myuser'
+      MYSQL_DATABASE: eixo
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
     ports:
-      - '3306'
+      - '3306:3306'
+    volumes:
+      - eixo-mysql:/var/lib/mysql
+
+volumes:
+  eixo-mysql:

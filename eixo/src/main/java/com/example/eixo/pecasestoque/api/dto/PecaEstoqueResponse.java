@@ -14,6 +14,7 @@ public record PecaEstoqueResponse(
         BigDecimal estoqueMinimo,
         BigDecimal precoUnitario,
         UnidadeMedida unidadeMedida,
-        Long oficinaId
+        Long oficinaId,
+        Boolean ativa
 ) {
 }

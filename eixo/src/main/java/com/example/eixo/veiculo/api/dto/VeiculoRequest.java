@@ -4,7 +4,14 @@ import com.example.eixo.veiculo.model.Combustivel;
 import com.example.eixo.veiculo.model.Cor;
 import jakarta.validation.constraints.*;
 
+/** Cadastro de veículo. Cliente (proprietário) e modelo vão no corpo, não na URL. */
 public record VeiculoRequest(
+
+        @NotNull(message = "Cliente é obrigatório")
+        Long clienteId,
+
+        @NotNull(message = "Modelo é obrigatório")
+        Long idModelo,
 
         @NotBlank(message = "Placa é obrigatória")
         String placa,

@@ -1,32 +1,24 @@
 package com.example.eixo.oficina.mapper;
 
-import com.example.eixo.oficina.api.request.OficinaRequest;
-import com.example.eixo.oficina.api.response.OficinaResponse;
+import com.example.eixo.config.MapStructConfig;
+import com.example.eixo.oficina.api.dto.OficinaRequest;
+import com.example.eixo.oficina.api.dto.OficinaResponse;
 import com.example.eixo.oficina.model.Oficina;
-import org.springframework.stereotype.Component;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 
-@Component
-public class OficinaMapper {
+@Mapper(config = MapStructConfig.class)
+public interface OficinaMapper {
 
-    public Oficina transformaEmEntidade(OficinaRequest oficinaRequest){
-        Oficina oficina = new Oficina();
-        oficina.setNomeOficina(oficinaRequest.nomeOficina());
-        oficina.setCnpj(oficinaRequest.cnpj());
-        oficina.setTelefone(oficinaRequest.telefone());
-        oficina.setEmail(oficinaRequest.email());
-        return oficina;
-    }
+    @Mapping(target = "oficinaId", ignore = true)
+    @Mapping(target = "createdAt", ignore = true)
+    @Mapping(target = "updatedAt", ignore = true)
+    @Mapping(target = "listaClientes", ignore = true)
+    @Mapping(target = "listaUsuarios", ignore = true)
+    @Mapping(target = "listaOrcamentos", ignore = true)
+    @Mapping(target = "listaPecasEstoque", ignore = true)
+    @Mapping(target = "listaVeiculos", ignore = true)
+    Oficina paraEntidade(OficinaRequest oficinaRequest);
 
-    public OficinaResponse transformarEmResposta(Oficina oficina){
-        return new OficinaResponse(
-                oficina.getOficinaId(),
-                oficina.getNomeOficina(),
-                oficina.getEmail(),
-                oficina.getTelefone(),
-                oficina.getUpdatedAt(),
-                oficina.getCreatedAt()
-        );
-    }
-
-
+    OficinaResponse paraResposta(Oficina oficina);
 }

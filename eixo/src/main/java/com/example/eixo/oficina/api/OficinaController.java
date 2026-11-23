@@ -1,7 +1,7 @@
 package com.example.eixo.oficina.api;
 
-import com.example.eixo.oficina.api.request.OficinaRequest;
-import com.example.eixo.oficina.api.response.OficinaResponse;
+import com.example.eixo.oficina.api.dto.OficinaRequest;
+import com.example.eixo.oficina.api.dto.OficinaResponse;
 import com.example.eixo.oficina.service.OficinaService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -13,37 +13,34 @@ import java.util.List;
 @RestController
 @RequestMapping("/oficinas")
 @RequiredArgsConstructor
-@CrossOrigin(origins = {
-        "http://localhost:5500",
-        "http://127.0.0.1:5500"
-})
 public class OficinaController {
 
     private final OficinaService oficinaService;
 
     @GetMapping
     public ResponseEntity<List<OficinaResponse>> listar(){
-      return ResponseEntity.ok().body(oficinaService.listarOficinas());
+      return ResponseEntity.ok().body(oficinaService.listar());
     };
 
     @GetMapping("/{id}")
-    public ResponseEntity<OficinaResponse> buscarOficina(@PathVariable Long id){
-        return ResponseEntity.ok().body(oficinaService.encontrarOficinaPeloId(id));
+    public ResponseEntity<OficinaResponse> buscar(@PathVariable Long id){
+        return ResponseEntity.ok().body(oficinaService.buscar(id));
     };
 
     @PostMapping
-    public ResponseEntity<OficinaResponse> salvar(@Valid @RequestBody OficinaRequest oficinaRequest) {
-        return ResponseEntity.status(201).body(oficinaService.salvarOficina(oficinaRequest));
+    public ResponseEntity<OficinaResponse> criar(@Valid @RequestBody OficinaRequest oficinaRequest) {
+        return ResponseEntity.status(201).body(oficinaService.criar(oficinaRequest));
     }
 
     @DeleteMapping("/{id}")
-    public void deletar(@PathVariable Long id) {
-        oficinaService.deletarOficina(id);
+    public ResponseEntity<Void> excluir(@PathVariable Long id) {
+        oficinaService.excluir(id);
+        return ResponseEntity.noContent().build();
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<OficinaResponse> atualizarOficina(@Valid @RequestBody OficinaRequest oficinaRequest, @PathVariable Long id){
-        return ResponseEntity.ok().body(oficinaService.atualizarOficina(oficinaRequest, id));
+    public ResponseEntity<OficinaResponse> atualizar(@Valid @RequestBody OficinaRequest oficinaRequest, @PathVariable Long id){
+        return ResponseEntity.ok().body(oficinaService.atualizar(oficinaRequest, id));
     }
 
 

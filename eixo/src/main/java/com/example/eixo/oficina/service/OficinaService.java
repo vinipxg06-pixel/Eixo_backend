@@ -1,8 +1,8 @@
 package com.example.eixo.oficina.service;
 
 import com.example.eixo.excecao.excecoespersonalizadas.RecursoNaoEncontrado;
-import com.example.eixo.oficina.api.request.OficinaRequest;
-import com.example.eixo.oficina.api.response.OficinaResponse;
+import com.example.eixo.oficina.api.dto.OficinaRequest;
+import com.example.eixo.oficina.api.dto.OficinaResponse;
 import com.example.eixo.oficina.mapper.OficinaMapper;
 import com.example.eixo.oficina.model.Oficina;
 import com.example.eixo.oficina.repository.OficinaRepository;
@@ -19,47 +19,47 @@ public class OficinaService {
     private final OficinaRepository oficinaRepository;
     private final OficinaMapper oficinaMapper;
 
-    public Oficina findById(Long id){
+    public Oficina buscarEntidade(Long id){
         return oficinaRepository.findById(id)
                 .orElseThrow(() -> new RecursoNaoEncontrado("Oficina com id: " + id + " não encontrada"));
     }
 
-    public OficinaResponse encontrarOficinaPeloId(Long id){
-       Oficina oficinaEncontrada = findById(id);
-       OficinaResponse oficinaResponse = oficinaMapper.transformarEmResposta(oficinaEncontrada);
+    public OficinaResponse buscar(Long id){
+       Oficina oficinaEncontrada = buscarEntidade(id);
+       OficinaResponse oficinaResponse = oficinaMapper.paraResposta(oficinaEncontrada);
        return oficinaResponse;
     }
 
-    public List<OficinaResponse> listarOficinas(){
+    public List<OficinaResponse> listar(){
         List<Oficina> oficina = oficinaRepository.findAll();
         List<OficinaResponse> oficinaResponse = new ArrayList<>();
 
         for (Oficina oficina1 : oficina){
-            OficinaResponse oficinasListadas = oficinaMapper.transformarEmResposta(oficina1);
+            OficinaResponse oficinasListadas = oficinaMapper.paraResposta(oficina1);
             oficinaResponse.add(oficinasListadas);
         }
         return oficinaResponse;
     }
 
-    public void deletarOficina(Long id){
-        Oficina oficinaDeletar = findById(id);
+    public void excluir(Long id){
+        Oficina oficinaDeletar = buscarEntidade(id);
         oficinaRepository.delete(oficinaDeletar);
     }
 
-    public OficinaResponse atualizarOficina(OficinaRequest oficinaRequest, Long id) {
-        Oficina atualizar = findById(id);
+    public OficinaResponse atualizar(OficinaRequest oficinaRequest, Long id) {
+        Oficina atualizar = buscarEntidade(id);
         atualizar.setNomeOficina(oficinaRequest.nomeOficina());
         atualizar.setTelefone(oficinaRequest.telefone());
         atualizar.setEmail(oficinaRequest.email());
         atualizar.setCnpj(oficinaRequest.cnpj());
         oficinaRepository.save(atualizar);
 
-        return oficinaMapper.transformarEmResposta(atualizar);
+        return oficinaMapper.paraResposta(atualizar);
     }
 
-    public OficinaResponse salvarOficina(OficinaRequest oficinaRequest){
-        Oficina oficinaSalvar = oficinaMapper.transformaEmEntidade(oficinaRequest);
+    public OficinaResponse criar(OficinaRequest oficinaRequest){
+        Oficina oficinaSalvar = oficinaMapper.paraEntidade(oficinaRequest);
         oficinaRepository.save(oficinaSalvar);
-        return oficinaMapper.transformarEmResposta(oficinaSalvar);
+        return oficinaMapper.paraResposta(oficinaSalvar);
     }
 }

@@ -30,7 +30,7 @@ public class Cliente {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
-    private Status status;
+    private StatusCliente status;
 
     @Column(name = "cpf_cnpj")
     private String cpfCnpj;

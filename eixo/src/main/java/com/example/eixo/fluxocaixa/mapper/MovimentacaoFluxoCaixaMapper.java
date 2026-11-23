@@ -1,38 +1,31 @@
 package com.example.eixo.fluxocaixa.mapper;
 
+import com.example.eixo.config.MapStructConfig;
 import com.example.eixo.fluxocaixa.api.dto.MovimentacaoFluxoCaixaRequest;
 import com.example.eixo.fluxocaixa.api.dto.MovimentacaoFluxoCaixaResponse;
 import com.example.eixo.fluxocaixa.model.MovimentacaoFluxoCaixa;
-import org.springframework.stereotype.Component;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 
-@Component
-public class MovimentacaoFluxoCaixaMapper {
+@Mapper(config = MapStructConfig.class)
+public interface MovimentacaoFluxoCaixaMapper {
 
-    public MovimentacaoFluxoCaixa transformarEmEntidade(MovimentacaoFluxoCaixaRequest request) {
-        MovimentacaoFluxoCaixa movimentacao = new MovimentacaoFluxoCaixa();
-        movimentacao.setDescricao(request.descricao());
-        movimentacao.setTipo(request.tipo());
-        movimentacao.setValor(request.valor());
-        movimentacao.setCategoria(request.categoria());
-        return movimentacao;
-    }
+    // id, data, vínculos, oficina e cancelamento são definidos pelo MovimentacaoFluxoCaixaService
+    @Mapping(target = "idMovimentacao", ignore = true)
+    @Mapping(target = "dataMovimentacao", ignore = true)
+    @Mapping(target = "osVinculada", ignore = true)
+    @Mapping(target = "ordemServico", ignore = true)
+    @Mapping(target = "pecaEstoque", ignore = true)
+    @Mapping(target = "oficina", ignore = true)
+    @Mapping(target = "cancelada", ignore = true)
+    @Mapping(target = "canceladaEm", ignore = true)
+    MovimentacaoFluxoCaixa paraEntidade(MovimentacaoFluxoCaixaRequest request);
 
-    public MovimentacaoFluxoCaixaResponse transformarEmResposta(MovimentacaoFluxoCaixa movimentacao) {
-        return new MovimentacaoFluxoCaixaResponse(
-                movimentacao.getIdMovimentacao(),
-                movimentacao.getDescricao(),
-                movimentacao.getTipo(),
-                movimentacao.getValor(),
-                movimentacao.getCategoria(),
-                movimentacao.getDataMovimentacao(),
-                movimentacao.getOsVinculada(),
-                movimentacao.getOrdemServico() != null
-                        ? movimentacao.getOrdemServico().getIdOrdemServico()
-                        : null,
-                movimentacao.getPecaEstoque() != null
-                        ? movimentacao.getPecaEstoque().getEstoqueId()
-                        : null,
-                movimentacao.getOficina().getOficinaId()
-        );
-    }
+    @Mapping(target = "ordemServicoId", source = "ordemServico.idOrdemServico")
+    @Mapping(target = "estoqueId", source = "pecaEstoque.estoqueId")
+    @Mapping(target = "oficinaId", source = "oficina.oficinaId")
+    // regras da entidade, não os campos crus (cancelada pode estar null no banco)
+    @Mapping(target = "automatica", expression = "java(movimentacao.isAutomatica())")
+    @Mapping(target = "cancelada", expression = "java(movimentacao.estaCancelada())")
+    MovimentacaoFluxoCaixaResponse paraResposta(MovimentacaoFluxoCaixa movimentacao);
 }

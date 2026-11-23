@@ -30,8 +30,10 @@ public class MovimentacaoFluxoCaixaService {
     private final MovimentacaoFluxoCaixaMapper movimentacaoFluxoCaixaMapper;
     private final OficinaService oficinaService;
 
+    private static final int TAMANHO_MAXIMO_DESCRICAO = 100;
+
     @Transactional(readOnly = true)
-    public MovimentacaoFluxoCaixa findById(Long idMovimentacao, Long oficinaId) {
+    public MovimentacaoFluxoCaixa buscarEntidade(Long idMovimentacao, Long oficinaId) {
         return movimentacaoFluxoCaixaRepository
                 .findByIdMovimentacaoAndOficina_OficinaId(idMovimentacao, oficinaId)
                 .orElseThrow(() -> new RecursoNaoEncontrado(
@@ -40,14 +42,14 @@ public class MovimentacaoFluxoCaixaService {
     }
 
     @Transactional(readOnly = true)
-    public MovimentacaoFluxoCaixaResponse encontrarMovimentacaoPeloId(Long idMovimentacao, Long oficinaId) {
-        return movimentacaoFluxoCaixaMapper.transformarEmResposta(
-                findById(idMovimentacao, oficinaId)
+    public MovimentacaoFluxoCaixaResponse buscar(Long idMovimentacao, Long oficinaId) {
+        return movimentacaoFluxoCaixaMapper.paraResposta(
+                buscarEntidade(idMovimentacao, oficinaId)
         );
     }
 
     @Transactional(readOnly = true)
-    public List<MovimentacaoFluxoCaixaResponse> listarMovimentacoes(Long oficinaId) {
+    public List<MovimentacaoFluxoCaixaResponse> listar(Long oficinaId) {
         List<MovimentacaoFluxoCaixa> movimentacoes =
                 movimentacaoFluxoCaixaRepository.findAllByOficina_OficinaId(oficinaId);
 
@@ -55,7 +57,7 @@ public class MovimentacaoFluxoCaixaService {
 
         for (MovimentacaoFluxoCaixa movimentacao : movimentacoes) {
             respostas.add(
-                    movimentacaoFluxoCaixaMapper.transformarEmResposta(movimentacao)
+                    movimentacaoFluxoCaixaMapper.paraResposta(movimentacao)
             );
         }
 
@@ -63,14 +65,14 @@ public class MovimentacaoFluxoCaixaService {
     }
 
     @Transactional
-    public MovimentacaoFluxoCaixaResponse adicionarMovimentacao(
+    public MovimentacaoFluxoCaixaResponse criar(
             MovimentacaoFluxoCaixaRequest request,
             Long oficinaId
     ) {
-        Oficina oficina = oficinaService.findById(oficinaId);
+        Oficina oficina = oficinaService.buscarEntidade(oficinaId);
 
         MovimentacaoFluxoCaixa movimentacao =
-                movimentacaoFluxoCaixaMapper.transformarEmEntidade(request);
+                movimentacaoFluxoCaixaMapper.paraEntidade(request);
 
         movimentacao.setOficina(oficina);
         movimentacao.setDataMovimentacao(LocalDate.now());
@@ -81,38 +83,36 @@ public class MovimentacaoFluxoCaixaService {
         MovimentacaoFluxoCaixa movimentacaoSalva =
                 movimentacaoFluxoCaixaRepository.save(movimentacao);
 
-        return movimentacaoFluxoCaixaMapper.transformarEmResposta(movimentacaoSalva);
+        return movimentacaoFluxoCaixaMapper.paraResposta(movimentacaoSalva);
     }
 
     @Transactional
-    public MovimentacaoFluxoCaixaResponse atualizarMovimentacao(
+    public MovimentacaoFluxoCaixaResponse atualizar(
             MovimentacaoFluxoCaixaRequest request,
             Long idMovimentacao,
             Long oficinaId
     ) {
-        MovimentacaoFluxoCaixa movimentacao = findById(idMovimentacao, oficinaId);
+        MovimentacaoFluxoCaixa movimentacao = buscarEntidade(idMovimentacao, oficinaId);
 
-        if (Boolean.TRUE.equals(movimentacao.getOsVinculada())
-                || movimentacao.getPecaEstoque() != null) {
-            throw new RegraDeNegocio(
-                    "Movimentações automáticas não podem ser alteradas manualmente"
-            );
-        }
+        movimentacao.garantirAlteravel();
 
         movimentacao.setDescricao(request.descricao());
         movimentacao.setTipo(request.tipo());
         movimentacao.setValor(request.valor());
         movimentacao.setCategoria(request.categoria());
 
-        return movimentacaoFluxoCaixaMapper.transformarEmResposta(
+        return movimentacaoFluxoCaixaMapper.paraResposta(
                 movimentacaoFluxoCaixaRepository.save(movimentacao)
         );
     }
 
     @Transactional
-    public void deletarMovimentacao(Long idMovimentacao, Long oficinaId) {
-        MovimentacaoFluxoCaixa movimentacao = findById(idMovimentacao, oficinaId);
-        movimentacaoFluxoCaixaRepository.delete(movimentacao);
+    public MovimentacaoFluxoCaixaResponse cancelarMovimentacao(Long idMovimentacao, Long oficinaId) {
+        MovimentacaoFluxoCaixa movimentacao = buscarEntidade(idMovimentacao, oficinaId);
+        movimentacao.cancelar();
+        return movimentacaoFluxoCaixaMapper.paraResposta(
+                movimentacaoFluxoCaixaRepository.save(movimentacao)
+        );
     }
 
     @Transactional
@@ -143,7 +143,7 @@ public class MovimentacaoFluxoCaixaService {
         MovimentacaoFluxoCaixa movimentacaoSalva =
                 movimentacaoFluxoCaixaRepository.save(movimentacao);
 
-        return movimentacaoFluxoCaixaMapper.transformarEmResposta(movimentacaoSalva);
+        return movimentacaoFluxoCaixaMapper.paraResposta(movimentacaoSalva);
     }
 
     @Transactional
@@ -155,9 +155,7 @@ public class MovimentacaoFluxoCaixaService {
         BigDecimal valorTotal = quantidadeEntrada.multiply(precoUnitarioEntrada);
 
         MovimentacaoFluxoCaixa movimentacao = new MovimentacaoFluxoCaixa();
-        movimentacao.setDescricao(
-                "Compra de estoque - " + pecaEstoque.getNomePeca()
-        );
+        movimentacao.setDescricao(limitarDescricao("Compra de estoque - " + pecaEstoque.getNomePeca()));
         movimentacao.setTipo(TipoMovimentacao.Saida);
         movimentacao.setCategoria(CategoriaMovimentacao.CompraDePeca);
         movimentacao.setValor(valorTotal);
@@ -170,6 +168,33 @@ public class MovimentacaoFluxoCaixaService {
         MovimentacaoFluxoCaixa movimentacaoSalva =
                 movimentacaoFluxoCaixaRepository.save(movimentacao);
 
-        return movimentacaoFluxoCaixaMapper.transformarEmResposta(movimentacaoSalva);
+        return movimentacaoFluxoCaixaMapper.paraResposta(movimentacaoSalva);
+    }
+
+    @Transactional
+    public MovimentacaoFluxoCaixaResponse registrarReceitaVendaPeca(
+            PecaEstoque pecaEstoque,
+            BigDecimal quantidade,
+            BigDecimal valorUnitarioVenda
+    ) {
+        MovimentacaoFluxoCaixa movimentacao = new MovimentacaoFluxoCaixa();
+        movimentacao.setDescricao(limitarDescricao("Venda de peça - " + pecaEstoque.getNomePeca()));
+        movimentacao.setTipo(TipoMovimentacao.Entrada);
+        movimentacao.setCategoria(CategoriaMovimentacao.VendaDePeca);
+        movimentacao.setValor(quantidade.multiply(valorUnitarioVenda));
+        movimentacao.setDataMovimentacao(LocalDate.now());
+        movimentacao.setOsVinculada(false);
+        movimentacao.setOrdemServico(null);
+        movimentacao.setPecaEstoque(pecaEstoque);
+        movimentacao.setOficina(pecaEstoque.getOficina());
+
+        return movimentacaoFluxoCaixaMapper.paraResposta(
+                movimentacaoFluxoCaixaRepository.save(movimentacao)
+        );
+    }
+
+    /** A coluna "descricao" aceita no máximo 100 caracteres; nomes de peça longos são cortados. */
+    private String limitarDescricao(String descricao) {
+        return descricao.length() <= TAMANHO_MAXIMO_DESCRICAO ? descricao : descricao.substring(0, TAMANHO_MAXIMO_DESCRICAO);
     }
 }

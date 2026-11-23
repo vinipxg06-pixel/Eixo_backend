@@ -1,6 +1,7 @@
 package com.example.eixo.ordemservico.model;
 
 import com.example.eixo.cliente.model.Cliente;
+import com.example.eixo.excecao.excecoespersonalizadas.RegraDeNegocio;
 import com.example.eixo.excecao.excecoespersonalizadas.TransicaoInvalida;
 import com.example.eixo.oficina.model.Oficina;
 import com.example.eixo.orcamento.model.Orcamento;
@@ -43,6 +44,13 @@ public class OrdemServico {
 
     @Column(name = "data_fechamento")
     private LocalDate dataFechamento;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "motivo_cancelamento")
+    private MotivoCancelamentoOrdemServico motivoCancelamento;
+
+    @Column(name = "data_cancelamento")
+    private LocalDate dataCancelamento;
 
     @Column(name = "mao_obra", precision = 10, scale = 2)
     private BigDecimal maoDeObra;
@@ -94,5 +102,27 @@ public class OrdemServico {
                             + " e não pode mais ser alterada"
             );
         }
+    }
+
+    public boolean estaCancelada() {
+        return status == StatusOrdemServico.Cancelada;
+    }
+
+    /** Aberta -> Fechada. A receita no caixa e a confirmação de OS sem custo ficam no serviço. */
+    public void fechar() {
+        garantirEditavel();
+        status = StatusOrdemServico.Fechada;
+        dataFechamento = LocalDate.now();
+    }
+
+    /** Aberta -> Cancelada, sempre com um motivo da lista padrão. A devolução das peças fica no serviço. */
+    public void cancelar(MotivoCancelamentoOrdemServico motivo) {
+        garantirEditavel();
+        if (motivo == null) {
+            throw new RegraDeNegocio("Informe o motivo do cancelamento");
+        }
+        status = StatusOrdemServico.Cancelada;
+        motivoCancelamento = motivo;
+        dataCancelamento = LocalDate.now();
     }
 }

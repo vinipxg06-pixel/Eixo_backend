@@ -15,7 +15,7 @@ public interface OsPecasRepository extends JpaRepository<OsPecas, Long> {
 
     Optional<OsPecas> findByIdOsPecasAndOrdemServico_IdOrdemServico(Long idOsPecas, Long idOrdemServico);
 
-    Optional<OsPecas> findByOrdemServico_IdOrdemServicoAndPecaEstoque_EstoqueId(Long idOrdemServico, Long estoqueId);
+    Optional<OsPecas> findByOrdemServico_IdOrdemServicoAndPecaEstoque_EstoqueIdAndValor(Long idOrdemServico, Long estoqueId, BigDecimal valor);
 
     @Query("""
             SELECT SUM(op.valor * op.quantidade)
@@ -27,4 +27,6 @@ public interface OsPecasRepository extends JpaRepository<OsPecas, Long> {
     );
 
     void deleteAllByOrdemServico_IdOrdemServico(Long idOrdemServico);
+
+    boolean existsByPecaEstoque_EstoqueId(Long estoqueId);
 }

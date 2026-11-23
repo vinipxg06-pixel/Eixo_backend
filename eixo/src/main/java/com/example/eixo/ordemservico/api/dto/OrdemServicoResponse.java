@@ -1,5 +1,6 @@
 package com.example.eixo.ordemservico.api.dto;
 
+import com.example.eixo.ordemservico.model.MotivoCancelamentoOrdemServico;
 import com.example.eixo.ordemservico.model.StatusOrdemServico;
 
 import java.math.BigDecimal;
@@ -12,8 +13,12 @@ public record OrdemServicoResponse(
         StatusOrdemServico status,
         String descricao,
         BigDecimal valorTotal,
+        /** Valor do orçamento aprovado que originou a OS (nulo em OS aberta diretamente). */
+        BigDecimal valorAprovado,
         LocalDate dataAbertura,
         LocalDate dataFechamento,
+        MotivoCancelamentoOrdemServico motivoCancelamento,
+        LocalDate dataCancelamento,
         BigDecimal maoDeObra,
         Long oficinaId,
         Long clienteId,

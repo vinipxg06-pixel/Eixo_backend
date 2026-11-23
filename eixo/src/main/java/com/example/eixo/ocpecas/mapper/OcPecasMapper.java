@@ -1,21 +1,16 @@
 package com.example.eixo.ocpecas.mapper;
 
-import com.example.eixo.ocpecas.api.dto.response.OcPecasResponse;
+import com.example.eixo.config.MapStructConfig;
+import com.example.eixo.ocpecas.api.dto.OcPecasResponse;
 import com.example.eixo.ocpecas.model.OcPecas;
-import org.springframework.stereotype.Component;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 
-@Component
-public class OcPecasMapper {
+@Mapper(config = MapStructConfig.class)
+public interface OcPecasMapper {
 
-    public OcPecasResponse toResponse(OcPecas item) {
-        return new OcPecasResponse(
-                item.getIdOcPecas(),
-                item.getPecaEstoque().getEstoqueId(),
-                item.getPecaEstoque().getNomePeca(),
-                item.getValor(),
-                item.getQuantidade(),
-                item.getValor().multiply(item.getQuantidade())
-        );
-    }
-
+    @Mapping(target = "estoqueId", source = "pecaEstoque.estoqueId")
+    @Mapping(target = "nomePeca", source = "pecaEstoque.nomePeca")
+    @Mapping(target = "subtotal", expression = "java(item.subtotal())")
+    OcPecasResponse paraResposta(OcPecas item);
 }

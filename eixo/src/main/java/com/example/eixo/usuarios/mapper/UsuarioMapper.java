@@ -1,27 +1,27 @@
 package com.example.eixo.usuarios.mapper;
 
+import com.example.eixo.config.MapStructConfig;
 import com.example.eixo.usuarios.api.dto.LoginResponse;
 import com.example.eixo.usuarios.api.dto.UsuarioRequest;
 import com.example.eixo.usuarios.api.dto.UsuarioResponse;
 import com.example.eixo.usuarios.model.Usuario;
-import org.springframework.stereotype.Component;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 
-@Component
-public class UsuarioMapper {
+@Mapper(config = MapStructConfig.class)
+public interface UsuarioMapper {
 
-    public Usuario toEntity(UsuarioRequest usuarioRequest) {
-        Usuario usuario = new Usuario();
-        usuario.setEmail(usuarioRequest.email());
-        usuario.setNomeUsuario(usuarioRequest.nomeUsuario());
-        usuario.setSenha(usuarioRequest.senha());
-        return usuario;
-    }
+    // a senha chega em texto puro; o UsuarioService aplica o hash antes de salvar
+    @Mapping(target = "idUsuario", ignore = true)
+    @Mapping(target = "usuarioStatus", ignore = true)
+    @Mapping(target = "createdAt", ignore = true)
+    @Mapping(target = "updatedAt", ignore = true)
+    @Mapping(target = "oficina", ignore = true)
+    Usuario paraEntidade(UsuarioRequest usuarioRequest);
 
-    public UsuarioResponse toResponse(Usuario usuario){
-        return new UsuarioResponse(usuario.getIdUsuario(), usuario.getNomeUsuario(), usuario.getUsuarioStatus(), usuario.getOficina().getOficinaId());
-    }
+    @Mapping(target = "oficinaId", source = "oficina.oficinaId")
+    UsuarioResponse paraResposta(Usuario usuario);
 
-    public LoginResponse toLoginResponse(Usuario usuario){
-        return new LoginResponse(usuario.getOficina().getOficinaId());
-    }
+    @Mapping(target = "oficinaId", source = "oficina.oficinaId")
+    LoginResponse paraRespostaLogin(Usuario usuario);
 }
