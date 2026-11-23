@@ -6,6 +6,7 @@ import com.example.eixo.cliente.api.dto.ClienteResponse;
 import com.example.eixo.cliente.api.dto.ClienteUpdateRequest;
 import com.example.eixo.cliente.service.ClienteService;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,36 +14,35 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/oficinas/{oficinaId}/clientes")
-@CrossOrigin(origins = {
-        "http://localhost:5500",
-        "http://127.0.0.1:5500"
-})
+@RequiredArgsConstructor
 public class ClienteController {
 
     private final ClienteService clienteService;
 
-    public ClienteController(ClienteService clienteService) {
-        this.clienteService = clienteService;
-    }
-
     @GetMapping
-    public ResponseEntity<List<ClienteResponse>> getAllClientes(@PathVariable Long oficinaId){
-        return ResponseEntity.ok().body(clienteService.findAllClientes(oficinaId));
+    public ResponseEntity<List<ClienteResponse>> listar(@PathVariable Long oficinaId){
+        return ResponseEntity.ok().body(clienteService.listar(oficinaId));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ClienteResponse> getClienteById(@PathVariable Long id, @PathVariable Long oficinaId){
-        return ResponseEntity.ok().body(clienteService.findClienteById(id, oficinaId));
+    public ResponseEntity<ClienteResponse> buscar(@PathVariable Long id, @PathVariable Long oficinaId){
+        return ResponseEntity.ok().body(clienteService.buscar(id, oficinaId));
     }
 
     @PostMapping
-    public ResponseEntity<ClienteResponse> postCliente(@Valid @RequestBody ClienteRequest clienteRequest, @PathVariable Long oficinaId){
-        return ResponseEntity.status(201).body(clienteService.saveCliente(clienteRequest, oficinaId));
+    public ResponseEntity<ClienteResponse> criar(@Valid @RequestBody ClienteRequest clienteRequest, @PathVariable Long oficinaId){
+        return ResponseEntity.status(201).body(clienteService.criar(clienteRequest, oficinaId));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ClienteResponse> putCliente(@Valid @RequestBody ClienteUpdateRequest clienteUpdateRequest, @PathVariable Long id, @PathVariable Long oficinaId){
-        return ResponseEntity.ok().body(clienteService.updateCliente(clienteUpdateRequest, id, oficinaId));
+    public ResponseEntity<ClienteResponse> atualizar(@Valid @RequestBody ClienteUpdateRequest clienteUpdateRequest, @PathVariable Long id, @PathVariable Long oficinaId){
+        return ResponseEntity.ok().body(clienteService.atualizar(clienteUpdateRequest, id, oficinaId));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> excluir(@PathVariable Long id, @PathVariable Long oficinaId){
+        clienteService.excluir(id, oficinaId);
+        return ResponseEntity.noContent().build();
     }
 
 }

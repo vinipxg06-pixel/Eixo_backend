@@ -1,7 +1,8 @@
 package com.example.eixo.marcasmodelos.api;
 
-import com.example.eixo.marcasmodelos.api.dtos.ModeloResponse;
+import com.example.eixo.marcasmodelos.api.dto.ModeloResponse;
 import com.example.eixo.marcasmodelos.service.ModeloService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -9,30 +10,23 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/modelos")
-@CrossOrigin(origins = {
-        "http://localhost:5500",
-        "http://127.0.0.1:5500"
-})
+@RequiredArgsConstructor
 public class ModeloController {
 
     private final ModeloService modeloService;
 
-    public ModeloController(ModeloService modeloService) {
-        this.modeloService = modeloService;
-    }
-
     @GetMapping
-    public ResponseEntity<List<ModeloResponse>> getAllModelos(){
-        return ResponseEntity.ok().body(modeloService.findAllModelos());
+    public ResponseEntity<List<ModeloResponse>> listar(){
+        return ResponseEntity.ok().body(modeloService.listar());
     }
 
     @GetMapping("/marca/{idMarca}")
-    public ResponseEntity<List<ModeloResponse>> getAllModelosById_Marca(@PathVariable Long idMarca){
-        return ResponseEntity.ok().body(modeloService.findAllModeloById_Marca(idMarca));
+    public ResponseEntity<List<ModeloResponse>> listarPorMarca(@PathVariable Long idMarca){
+        return ResponseEntity.ok().body(modeloService.listarPorMarca(idMarca));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ModeloResponse> getModeloById(@PathVariable Long id){
-        return ResponseEntity.ok().body(modeloService.findModeloById(id));
+    public ResponseEntity<ModeloResponse> buscar(@PathVariable Long id){
+        return ResponseEntity.ok().body(modeloService.buscar(id));
     }
 }

@@ -5,6 +5,7 @@ import com.example.eixo.fluxocaixa.model.TipoMovimentacao;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 public record MovimentacaoFluxoCaixaResponse(
         Long idMovimentacao,
@@ -16,6 +17,9 @@ public record MovimentacaoFluxoCaixaResponse(
         Boolean osVinculada,
         Long ordemServicoId,
         Long estoqueId,
-        Long oficinaId
+        Long oficinaId,
+        Boolean automatica,
+        Boolean cancelada,
+        LocalDateTime canceladaEm
 ) {
 }

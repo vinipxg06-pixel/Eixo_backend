@@ -13,6 +13,9 @@ public record PecaEstoqueAdicionarRequest(
 
         @NotNull
         @PositiveOrZero
-        BigDecimal precoUnitarioEntrada
+        BigDecimal precoUnitarioEntrada,
+        /** Se true, a compra é lançada como saída no fluxo de caixa. */
+        @NotNull
+        Boolean registrarMovimentacao
 ) {
 }

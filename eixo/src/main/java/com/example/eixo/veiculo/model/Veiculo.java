@@ -25,7 +25,7 @@ public class Veiculo {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idVeiculo;
 
-    @Column(name = "placa", nullable = false, unique = true, length = 7)
+    @Column(name = "placa", nullable = false, length = 7) // única por oficina (uk_veiculos_oficina_placa)
     private String placa;
 
     @Enumerated(EnumType.STRING)

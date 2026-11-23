@@ -1,8 +1,9 @@
 package com.example.eixo.orcamento.api;
 
-import com.example.eixo.orcamento.api.request.OrcamentoRequest;
-import com.example.eixo.orcamento.api.request.OrcamentoUpdateRequest;
-import com.example.eixo.orcamento.api.response.OrcamentoResponse;
+import com.example.eixo.orcamento.api.dto.OrcamentoRequest;
+import com.example.eixo.orcamento.api.dto.OrcamentoUpdateRequest;
+import com.example.eixo.orcamento.api.dto.OrcamentoResponse;
+import com.example.eixo.orcamento.service.OrcamentoComPecasService;
 import com.example.eixo.orcamento.service.OrcamentoService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -14,32 +15,29 @@ import java.util.List;
 @RestController
 @RequestMapping("/oficinas/{oficinaId}/orcamentos")
 @RequiredArgsConstructor
-@CrossOrigin(origins = {
-        "http://localhost:5500",
-        "http://127.0.0.1:5500"
-})
 public class OrcamentoController {
 
     private final OrcamentoService orcamentoService;
+    private final OrcamentoComPecasService orcamentoComPecasService;
 
     @GetMapping
     public ResponseEntity<List<OrcamentoResponse>> listar(@PathVariable Long oficinaId) {
-        return ResponseEntity.ok(orcamentoService.listaOrcamentos(oficinaId));
+        return ResponseEntity.ok(orcamentoService.listar(oficinaId));
     }
 
     @GetMapping("/{orcamentoId}")
     public ResponseEntity<OrcamentoResponse> buscar(@PathVariable Long oficinaId, @PathVariable Long orcamentoId) {
-        return ResponseEntity.ok(orcamentoService.encontrarOrcamentoPeloId(orcamentoId, oficinaId));
+        return ResponseEntity.ok(orcamentoService.buscar(orcamentoId, oficinaId));
     }
 
-    @PostMapping("/cliente/{clienteId}/veiculo/{veiculoId}")
-    public ResponseEntity<OrcamentoResponse> criar(@Valid @RequestBody OrcamentoRequest request, @PathVariable Long oficinaId, @PathVariable Long clienteId, @PathVariable Long veiculoId) {
-        return ResponseEntity.status(201).body(orcamentoService.salvarOrcamento(request, oficinaId, clienteId, veiculoId));
+    @PostMapping
+    public ResponseEntity<OrcamentoResponse> criar(@Valid @RequestBody OrcamentoRequest request, @PathVariable Long oficinaId) {
+        return ResponseEntity.status(201).body(orcamentoComPecasService.criar(request, oficinaId));
     }
 
     @PutMapping("/{orcamentoId}")
     public ResponseEntity<OrcamentoResponse> atualizar(@Valid @RequestBody OrcamentoUpdateRequest request, @PathVariable Long oficinaId, @PathVariable Long orcamentoId) {
-        return ResponseEntity.ok(orcamentoService.atualizarOrcamento(request, orcamentoId, oficinaId));
+        return ResponseEntity.ok(orcamentoComPecasService.atualizar(request, orcamentoId, oficinaId));
     }
 
     @PostMapping("/{orcamentoId}/aprovar")
@@ -53,8 +51,8 @@ public class OrcamentoController {
     }
 
     @DeleteMapping("/{orcamentoId}")
-    public ResponseEntity<Void> deletar(@PathVariable Long oficinaId, @PathVariable Long orcamentoId) {
-        orcamentoService.deletarOrcamento(orcamentoId, oficinaId);
+    public ResponseEntity<Void> excluir(@PathVariable Long oficinaId, @PathVariable Long orcamentoId) {
+        orcamentoService.excluir(orcamentoId, oficinaId);
         return ResponseEntity.noContent().build();
     }
 }

@@ -13,10 +13,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/oficinas/{oficinaId}/fluxo-caixa")
 @RequiredArgsConstructor
-@CrossOrigin(origins = {
-        "http://localhost:5500",
-        "http://127.0.0.1:5500"
-})
 public class MovimentacaoFluxoCaixaController {
 
     private final MovimentacaoFluxoCaixaService movimentacaoFluxoCaixaService;
@@ -26,7 +22,7 @@ public class MovimentacaoFluxoCaixaController {
             @PathVariable Long oficinaId
     ) {
         return ResponseEntity.ok(
-                movimentacaoFluxoCaixaService.listarMovimentacoes(oficinaId)
+                movimentacaoFluxoCaixaService.listar(oficinaId)
         );
     }
 
@@ -36,7 +32,7 @@ public class MovimentacaoFluxoCaixaController {
             @PathVariable Long idMovimentacao
     ) {
         return ResponseEntity.ok(
-                movimentacaoFluxoCaixaService.encontrarMovimentacaoPeloId(
+                movimentacaoFluxoCaixaService.buscar(
                         idMovimentacao,
                         oficinaId
                 )
@@ -44,12 +40,12 @@ public class MovimentacaoFluxoCaixaController {
     }
 
     @PostMapping
-    public ResponseEntity<MovimentacaoFluxoCaixaResponse> adicionar(
+    public ResponseEntity<MovimentacaoFluxoCaixaResponse> criar(
             @Valid @RequestBody MovimentacaoFluxoCaixaRequest request,
             @PathVariable Long oficinaId
     ) {
         return ResponseEntity.status(201).body(
-                movimentacaoFluxoCaixaService.adicionarMovimentacao(
+                movimentacaoFluxoCaixaService.criar(
                         request,
                         oficinaId
                 )
@@ -63,7 +59,7 @@ public class MovimentacaoFluxoCaixaController {
             @PathVariable Long idMovimentacao
     ) {
         return ResponseEntity.ok(
-                movimentacaoFluxoCaixaService.atualizarMovimentacao(
+                movimentacaoFluxoCaixaService.atualizar(
                         request,
                         idMovimentacao,
                         oficinaId
@@ -71,16 +67,16 @@ public class MovimentacaoFluxoCaixaController {
         );
     }
 
-    @DeleteMapping("/{idMovimentacao}")
-    public ResponseEntity<Void> deletar(
+    @PostMapping("/{idMovimentacao}/cancelar")
+    public ResponseEntity<MovimentacaoFluxoCaixaResponse> cancelar(
             @PathVariable Long oficinaId,
             @PathVariable Long idMovimentacao
     ) {
-        movimentacaoFluxoCaixaService.deletarMovimentacao(
-                idMovimentacao,
-                oficinaId
+        return ResponseEntity.ok(
+                movimentacaoFluxoCaixaService.cancelarMovimentacao(
+                        idMovimentacao,
+                        oficinaId
+                )
         );
-
-        return ResponseEntity.noContent().build();
     }
 }

@@ -1,40 +1,26 @@
 package com.example.eixo.veiculo.mapper;
 
+import com.example.eixo.config.MapStructConfig;
 import com.example.eixo.marcasmodelos.mapper.ModeloMapper;
 import com.example.eixo.veiculo.api.dto.VeiculoRequest;
 import com.example.eixo.veiculo.api.dto.VeiculoResponse;
 import com.example.eixo.veiculo.model.Veiculo;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 
-@Component
-@RequiredArgsConstructor
-public class VeiculoMapper {
+@Mapper(config = MapStructConfig.class, uses = ModeloMapper.class)
+public interface VeiculoMapper {
 
-    private final ModeloMapper modeloMapper;
+    // id, oficina, modelo, cliente e datas são definidos pelo VeiculoService
+    @Mapping(target = "idVeiculo", ignore = true)
+    @Mapping(target = "createdAt", ignore = true)
+    @Mapping(target = "updatedAt", ignore = true)
+    @Mapping(target = "oficina", ignore = true)
+    @Mapping(target = "modelo", ignore = true)
+    @Mapping(target = "cliente", ignore = true)
+    Veiculo paraEntidade(VeiculoRequest veiculoRequest);
 
-    public Veiculo toEntity(VeiculoRequest veiculoRequest){
-        Veiculo veiculo = new Veiculo();
-
-        veiculo.setPlaca(veiculoRequest.placa());
-        veiculo.setCombustivel(veiculoRequest.combustivel());
-        veiculo.setCor(veiculoRequest.cor());
-        veiculo.setAno(veiculoRequest.ano());
-        veiculo.setQuilometragem(veiculoRequest.quilometragem());
-        return veiculo;
-    }
-
-    public VeiculoResponse toResponse(Veiculo veiculo) {
-        return new VeiculoResponse(
-                veiculo.getIdVeiculo(),
-                veiculo.getPlaca(),
-                veiculo.getCombustivel(),
-                veiculo.getCor(),
-                veiculo.getAno(),
-                veiculo.getQuilometragem(),
-                veiculo.getOficina().getOficinaId(),
-                modeloMapper.toResponse(veiculo.getModelo()),
-                veiculo.getCliente().getNomeCliente()
-        );
-    }
+    @Mapping(target = "oficinaId", source = "oficina.oficinaId")
+    @Mapping(target = "nomeCliente", source = "cliente.nomeCliente")
+    VeiculoResponse paraResposta(Veiculo veiculo);
 }

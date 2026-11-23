@@ -1,6 +1,6 @@
 package com.example.eixo.veiculo.api.dto;
 
-import com.example.eixo.marcasmodelos.api.dtos.ModeloResponse;
+import com.example.eixo.marcasmodelos.api.dto.ModeloResponse;
 import com.example.eixo.veiculo.model.Combustivel;
 import com.example.eixo.veiculo.model.Cor;
 

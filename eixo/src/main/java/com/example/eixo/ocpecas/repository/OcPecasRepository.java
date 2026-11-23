@@ -15,7 +15,9 @@ public interface OcPecasRepository extends JpaRepository<OcPecas, Long> {
 
     List<OcPecas> findAllByOrcamento_idOrcamento(Long idOrcamento);
 
-    Optional<OcPecas> findByOrcamento_idOrcamentoAndPecaEstoque_estoqueId(Long idOrcamento, Long estoqueId);
+    Optional<OcPecas> findByIdOcPecasAndOrcamento_IdOrcamento(Long idOcPecas, Long idOrcamento);
+
+    Optional<OcPecas> findByOrcamento_IdOrcamentoAndPecaEstoque_EstoqueIdAndValor(Long idOrcamento, Long estoqueId, BigDecimal valor);
 
     @Query("""
         select sum(i.valor * i.quantidade)
@@ -23,4 +25,6 @@ public interface OcPecasRepository extends JpaRepository<OcPecas, Long> {
         where i.orcamento.idOrcamento = :orcamentoId
     """)
     BigDecimal somarItens(@Param("orcamentoId") Long orcamentoId);
+
+    boolean existsByPecaEstoque_EstoqueId(Long estoqueId);
 }

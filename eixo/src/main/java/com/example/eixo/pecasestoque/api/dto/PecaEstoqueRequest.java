@@ -5,11 +5,13 @@ import com.example.eixo.pecasestoque.model.UnidadeMedida;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PositiveOrZero;
+import jakarta.validation.constraints.Size;
 
 import java.math.BigDecimal;
 
 public record PecaEstoqueRequest(
         @NotBlank
+        @Size(max = 100)
         String nomePeca,
 
         @NotNull
@@ -19,6 +21,7 @@ public record PecaEstoqueRequest(
         @NotNull
         Categoria categoria,
 
+        @Size(max = 100)
         String codigoBarras,
 
         @NotNull
@@ -30,6 +33,9 @@ public record PecaEstoqueRequest(
         BigDecimal precoUnitario,
 
         @NotNull
-        UnidadeMedida unidadeMedida
+        UnidadeMedida unidadeMedida,
+        /** Se true, a quantidade inicial é lançada como compra (saída) no fluxo de caixa. */
+        @NotNull
+        Boolean registrarMovimentacao
 ) {
 }

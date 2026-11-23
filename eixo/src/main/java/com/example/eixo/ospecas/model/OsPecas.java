@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 @Entity
 @Table(name = "os_pecas")
@@ -34,4 +35,9 @@ public class OsPecas {
     @ManyToOne
     @JoinColumn(name = "ordens_servicos_id_ordem_servico", nullable = false)
     private OrdemServico ordemServico;
+
+    /** Valor da linha (preço gravado × quantidade), em reais com 2 casas. */
+    public BigDecimal subtotal() {
+        return valor.multiply(quantidade).setScale(2, RoundingMode.HALF_UP);
+    }
 }
